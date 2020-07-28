@@ -1,0 +1,20 @@
+#container > div {
+	display: inline-block;
+}
+
+#image-orig-container {
+	width: 40%;
+}
+
+#image-orig-container img {
+	width: 100%;
+}
+
+#image-juxtaposition {
+	width: 40%;
+	display:inline-block;
+}
+
+#images-to-compare div {
+	display: inline-block
+}

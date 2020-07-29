@@ -11,23 +11,23 @@
     <script src="https://cdn.knightlab.com/libs/juxtapose/latest/js/juxtapose.min.js"></script>
     <link rel="stylesheet" href="https://cdn.knightlab.com/libs/juxtapose/latest/css/juxtapose.css">
 
-    <link rel="stylesheet" href="style.css">
-    <script src="script.js"></script>
+    <link rel="stylesheet" href="static/style.css">
+    <script src="static/script.js"></script>
 
-    <title>TEST</title>
+    <title>{{ title }}</title>
 </head>
 
 <body>
     <div id="container">
         <div id="image-orig-container">
-            <img id="image-orig" src="orig.jpg">
+            <img id="image-orig" src="static/orig.jpg">
         </div>
         <div id="image-juxtaposition">
         </div>
     </div>
     <div id="images-to-compare">
-        <div><img class="image-compare" src="cropped.jpg"></div>
-        <div><img class="image-compare" src="cropped2x.jpg"></div>
+        <div><img class="image-compare" src="static/cropped.jpg"></div>
+        <div><img class="image-compare" src="static/cropped2x.jpg"></div>
     </div>
 </body>
 

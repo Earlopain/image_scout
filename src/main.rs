@@ -2,9 +2,15 @@
 
 #[macro_use]
 extern crate rocket;
+#[macro_use]
+extern crate rocket_contrib;
+use rocket_contrib::databases::diesel;
 use rocket_contrib::serve::StaticFiles;
 use rocket_contrib::templates::Template;
 use std::collections::HashMap;
+
+#[database("main")]
+struct DbConn(diesel::MysqlConnection);
 
 #[get("/")]
 fn compare() -> Template {
@@ -16,6 +22,7 @@ fn compare() -> Template {
 fn main() {
     rocket::ignite()
         .attach(Template::fairing())
+        .attach(DbConn::fairing())
         .mount("/", routes![compare])
         .mount("/static", StaticFiles::from("static"))
         .launch();

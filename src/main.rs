@@ -4,14 +4,17 @@
 extern crate rocket;
 #[macro_use]
 extern crate rocket_contrib;
+#[macro_use]
+extern crate diesel;
 
 use rocket_contrib::serve::StaticFiles;
 use rocket_contrib::templates::Template;
 
 use std::collections::HashMap;
 
+mod db;
+mod schema;
 mod seeding;
-mod database;
 
 #[get("/")]
 fn compare() -> Template {
@@ -21,15 +24,15 @@ fn compare() -> Template {
 }
 
 #[get("/seeding")]
-fn seeding(conn: database::Conn) {
+fn seeding(conn: db::Connection) {
     seeding::image::insert(conn);
 }
 
 fn main() {
     rocket::ignite()
-    .attach(Template::fairing())
-    .attach(database::Conn::fairing())
-    .mount("/", routes![compare, seeding])
-    .mount("/static", StaticFiles::from("static"))
-    .launch();
+        .attach(Template::fairing())
+        .attach(db::Connection::fairing())
+        .mount("/", routes![compare, seeding])
+        .mount("/static", StaticFiles::from("static"))
+        .launch();
 }

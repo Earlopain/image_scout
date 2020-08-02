@@ -1,5 +1,13 @@
-use crate::database;
+use crate::db::image::Image;
+use crate::db::Connection;
 
-pub fn insert(conn: database::Conn) {
-    println!("test");
+pub fn insert(conn: Connection) {
+    Image::create(
+        "https://pbs.twimg.com/media/EV1cvprUwAIDB4F?format=jpg&name=orig".to_string(),
+        &conn,
+    );
+    Image::create(
+        "https://d.facdn.net/art/kenket/1587158288/1587158288.kenket_freefall.jpg".to_string(),
+        &conn,
+    );
 }

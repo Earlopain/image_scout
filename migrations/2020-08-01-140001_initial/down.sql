@@ -1,11 +1,11 @@
-DROP TABLE artist_post;
+DROP TABLE artist_posts;
 
-DROP TABLE image;
+DROP TABLE images;
 
-DROP TABLE artist_page;
+DROP TABLE artist_pages;
 
-DROP TABLE page_type;
+DROP TABLE page_types;
 
-DROP TABLE artist_alias;
+DROP TABLE artist_aliases;
 
-DROP TABLE artist;
+DROP TABLE artists;

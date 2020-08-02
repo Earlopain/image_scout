@@ -1,12 +1,12 @@
 table! {
-    artist (id) {
+    artists (id) {
         id -> Integer,
         name -> Varchar,
     }
 }
 
 table! {
-    artist_alias (id) {
+    artist_aliases (id) {
         id -> Integer,
         artist_id -> Integer,
         alias -> Varchar,
@@ -14,7 +14,7 @@ table! {
 }
 
 table! {
-    artist_page (id) {
+    artist_pages (id) {
         id -> Integer,
         artist_id -> Integer,
         url -> Varchar,
@@ -26,7 +26,7 @@ table! {
 }
 
 table! {
-    artist_post (id) {
+    artist_posts (id) {
         id -> Integer,
         artist_id -> Integer,
         image_id -> Integer,
@@ -37,7 +37,7 @@ table! {
 }
 
 table! {
-    image (id) {
+    images (id) {
         id -> Integer,
         blob -> Longblob,
         width -> Integer,
@@ -48,24 +48,24 @@ table! {
 }
 
 table! {
-    page_type (id) {
+    page_types (id) {
         id -> Integer,
         name -> Varchar,
         regex -> Varchar,
     }
 }
 
-joinable!(artist_alias -> artist (artist_id));
-joinable!(artist_page -> artist (artist_id));
-joinable!(artist_page -> page_type (page_type));
-joinable!(artist_post -> artist (artist_id));
-joinable!(artist_post -> image (image_id));
+joinable!(artist_aliases -> artists (artist_id));
+joinable!(artist_pages -> artists (artist_id));
+joinable!(artist_pages -> page_types (page_type));
+joinable!(artist_posts -> artists (artist_id));
+joinable!(artist_posts -> images (image_id));
 
 allow_tables_to_appear_in_same_query!(
-    artist,
-    artist_alias,
-    artist_page,
-    artist_post,
-    image,
-    page_type,
+    artists,
+    artist_aliases,
+    artist_pages,
+    artist_posts,
+    images,
+    page_types,
 );

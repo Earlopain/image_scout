@@ -23,20 +23,11 @@ fn compare() -> Template {
     Template::render("compare", context)
 }
 
-#[get("/seeding")]
-fn seeding(conn: db::Connection) -> &'static str {
-    if seeding::image::insert(conn).is_err() {
-        "Failed to seed images"
-    } else {
-        "Success"
-    }
-}
-
 fn main() {
     rocket::ignite()
         .attach(Template::fairing())
         .attach(db::Connection::fairing())
-        .mount("/", routes![compare, seeding])
+        .mount("/", routes![compare, seeding::route])
         .mount("/static", StaticFiles::from("static"))
         .launch();
 }

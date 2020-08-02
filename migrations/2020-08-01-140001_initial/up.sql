@@ -11,9 +11,9 @@ COLLATE=utf8mb4_unicode_ci;
 CREATE TABLE artist_alias (
 	id INTEGER auto_increment NOT NULL,
 	artist_id INTEGER NOT NULL,
-	artist_alias varchar(50) NOT NULL,
+	alias varchar(50) NOT NULL,
 	CONSTRAINT artist_alias_PK PRIMARY KEY (id),
-	CONSTRAINT artist_alias_FK FOREIGN KEY (artist_id) REFERENCES reverser.artist(id) ON DELETE CASCADE
+	CONSTRAINT artist_alias_FK FOREIGN KEY (artist_id) REFERENCES artist(id) ON DELETE CASCADE
 )
 ENGINE=InnoDB
 DEFAULT CHARSET=utf8mb4
@@ -39,8 +39,8 @@ CREATE TABLE artist_page (
 	last_update TIMESTAMP NOT NULL,
 	active BOOL NOT NULL,
 	CONSTRAINT artist_page_PK PRIMARY KEY (id),
-	CONSTRAINT artist_page_FK FOREIGN KEY (artist_id) REFERENCES reverser.artist(id) ON DELETE CASCADE,
-	CONSTRAINT artist_page_FK_1 FOREIGN KEY (page_type) REFERENCES reverser.page_type(id) ON DELETE CASCADE
+	CONSTRAINT artist_page_FK FOREIGN KEY (artist_id) REFERENCES artist(id) ON DELETE CASCADE,
+	CONSTRAINT artist_page_FK_1 FOREIGN KEY (page_type) REFERENCES page_type(id) ON DELETE CASCADE
 )
 ENGINE=InnoDB
 DEFAULT CHARSET=utf8mb4
@@ -67,8 +67,8 @@ CREATE TABLE artist_post (
 	direct_url varchar(255) NULL,
 	created_at TIMESTAMP NOT NULL,
 	CONSTRAINT artist_post_PK PRIMARY KEY (id),
-	CONSTRAINT artist_post_FK FOREIGN KEY (artist_id) REFERENCES reverser.artist(id),
-	CONSTRAINT artist_post_FK_1 FOREIGN KEY (image_id) REFERENCES reverser.image(id)
+	CONSTRAINT artist_post_FK FOREIGN KEY (artist_id) REFERENCES artist(id),
+	CONSTRAINT artist_post_FK_1 FOREIGN KEY (image_id) REFERENCES image(id)
 )
 ENGINE=InnoDB
 DEFAULT CHARSET=utf8mb4

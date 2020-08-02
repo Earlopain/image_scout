@@ -9,7 +9,7 @@ table! {
     artist_alias (id) {
         id -> Integer,
         artist_id -> Integer,
-        artist_alias -> Varchar,
+        alias -> Varchar,
     }
 }
 

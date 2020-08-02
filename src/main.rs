@@ -7,6 +7,7 @@ extern crate rocket_contrib;
 #[macro_use]
 extern crate diesel;
 
+use rocket_contrib::json::Json;
 use rocket_contrib::serve::StaticFiles;
 use rocket_contrib::templates::Template;
 
@@ -23,11 +24,16 @@ fn compare() -> Template {
     Template::render("compare", context)
 }
 
+#[get("/artist/<name>")]
+fn artist(name: String, conn: db::Connection) -> Json<db::artist::Artist> {
+    Json(db::artist::Artist::get_by_name(&name, &conn).unwrap())
+}
+
 fn main() {
     rocket::ignite()
         .attach(Template::fairing())
         .attach(db::Connection::fairing())
-        .mount("/", routes![compare, seeding::route])
+        .mount("/", routes![compare, seeding::route, artist])
         .mount("/static", StaticFiles::from("static"))
         .launch();
 }

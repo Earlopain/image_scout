@@ -1,10 +1,12 @@
 use crate::schema::artists;
+use crate::schema::artists::dsl::*;
 use diesel;
 use diesel::mysql::MysqlConnection;
 use diesel::prelude::*;
+use serde::{Deserialize, Serialize};
 use std::error::Error;
 
-#[derive(Queryable, Insertable)]
+#[derive(Serialize, Deserialize, Queryable, Insertable)]
 #[table_name = "artists"]
 pub struct Artist {
     pub id: i32,
@@ -12,15 +14,22 @@ pub struct Artist {
 }
 
 impl Artist {
-    pub fn create(name: String, connection: &MysqlConnection) -> Result<(), Box<dyn Error>> {
+    pub fn create(artist_name: String, connection: &MysqlConnection) -> Result<(), Box<dyn Error>> {
         let artist = Artist {
             id: 0,
-            name: name,
+            name: artist_name,
         };
 
         diesel::insert_into(artists::table)
             .values(&artist)
             .execute(connection)?;
         Ok(())
+    }
+
+    pub fn get_by_name(
+        search_for: &String,
+        connection: &MysqlConnection,
+    ) -> Result<Artist, diesel::result::Error> {
+        artists::table.filter(name.eq(search_for)).first(connection)
     }
 }

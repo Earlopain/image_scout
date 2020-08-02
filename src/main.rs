@@ -24,8 +24,12 @@ fn compare() -> Template {
 }
 
 #[get("/seeding")]
-fn seeding(conn: db::Connection) {
-    seeding::image::insert(conn);
+fn seeding(conn: db::Connection) -> &'static str {
+    if seeding::image::insert(conn).is_err() {
+        "Failed to seed images"
+    } else {
+        "Success"
+    }
 }
 
 fn main() {

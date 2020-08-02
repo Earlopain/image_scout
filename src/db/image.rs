@@ -2,6 +2,7 @@ use crate::schema::images;
 use diesel;
 use diesel::mysql::MysqlConnection;
 use diesel::prelude::*;
+use std::error::Error;
 
 #[derive(Queryable, Insertable)]
 #[table_name = "images"]
@@ -15,9 +16,9 @@ pub struct Image {
 }
 
 impl Image {
-    pub fn create(url: String, connection: &MysqlConnection) -> bool {
+    pub fn create(url: String, connection: &MysqlConnection) -> Result<(), Box<dyn Error>> {
         let request = reqwest::blocking::get(&url);
-        let image = request.unwrap().bytes().unwrap().to_vec();
+        let image = request?.bytes()?.to_vec();
 
         let image = Image {
             id: 0,
@@ -30,9 +31,7 @@ impl Image {
 
         diesel::insert_into(images::table)
             .values(&image)
-            .execute(connection)
-            .expect("Error creating new hero");
-
-        return true;
+            .execute(connection)?;
+        Ok(())
     }
 }

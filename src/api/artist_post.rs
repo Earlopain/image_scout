@@ -3,6 +3,7 @@ use chrono::NaiveDateTime;
 use rocket_contrib::json::Json;
 use serde::{Deserialize, Serialize};
 
+//TODO copying struct fields must be easier than this
 #[derive(Serialize, Deserialize, Queryable)]
 pub struct ApiArtistPost {
     pub id: u32,

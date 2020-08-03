@@ -10,6 +10,8 @@ use img_hash::HasherConfig;
 use serde::{Deserialize, Serialize};
 use std::error::Error;
 
+//TODO instead of creating almost the same struct twice
+//they should somehow inherit their fields
 #[derive(Serialize, Deserialize, Queryable)]
 pub struct ArtistPostNoBlob {
     pub id: u32,

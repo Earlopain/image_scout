@@ -1,4 +1,5 @@
 use crate::schema::artist_posts;
+use artist_posts::columns;
 use chrono::NaiveDateTime;
 use diesel;
 use diesel::mysql::MysqlConnection;
@@ -8,6 +9,20 @@ use image::GenericImageView;
 use img_hash::HasherConfig;
 use serde::{Deserialize, Serialize};
 use std::error::Error;
+
+#[derive(Serialize, Deserialize, Queryable)]
+pub struct ArtistPostNoBlob {
+    pub id: u32,
+    pub artist_id: u32,
+    pub page_type: u32,
+    pub source_url: String,
+    pub direct_url: Option<String>,
+    pub width: u32,
+    pub height: u32,
+    pub perceptual_hash: Vec<u8>,
+    pub file_type: String,
+    pub created_at: NaiveDateTime,
+}
 
 #[derive(Serialize, Deserialize, Queryable, Insertable)]
 #[table_name = "artist_posts"]
@@ -71,7 +86,28 @@ impl ArtistPost {
         connection: &MysqlConnection,
     ) -> Result<ArtistPost, diesel::result::Error> {
         artist_posts::table
-            .filter(artist_posts::columns::id.eq(search_for))
+            .filter(columns::id.eq(search_for))
+            .first(connection)
+    }
+
+    pub fn get_by_id_no_blob(
+        search_for: &u32,
+        connection: &MysqlConnection,
+    ) -> Result<ArtistPostNoBlob, diesel::result::Error> {
+        artist_posts::table
+            .select((
+                columns::id,
+                columns::artist_id,
+                columns::page_type,
+                columns::source_url,
+                columns::direct_url,
+                columns::width,
+                columns::height,
+                columns::perceptual_hash,
+                columns::file_type,
+                columns::created_at,
+            ))
+            .filter(columns::id.eq(search_for))
             .first(connection)
     }
 }

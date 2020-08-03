@@ -1,5 +1,5 @@
 pub mod artist;
-pub mod image;
+pub mod artist_post;
 
 #[database("main")]
 pub struct Connection(rocket_contrib::databases::diesel::MysqlConnection);

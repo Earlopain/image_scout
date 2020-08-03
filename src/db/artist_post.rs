@@ -123,7 +123,7 @@ fn get_image_info(img_data: &Vec<u8>) -> ImageInfo {
         .first()
         .unwrap();
 
-    let hasher = HasherConfig::with_bytes_type::<[u8; 32]>().to_hasher();
+    let hasher = HasherConfig::with_bytes_type::<[u8; 32]>().hash_size(16,16).to_hasher();
     let hash = hasher.hash_image(&image);
 
     ImageInfo {

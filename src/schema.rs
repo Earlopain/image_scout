@@ -1,24 +1,24 @@
 table! {
     artists (id) {
-        id -> Integer,
+        id -> Unsigned<Integer>,
         name -> Varchar,
     }
 }
 
 table! {
     artist_aliases (id) {
-        id -> Integer,
-        artist_id -> Integer,
+        id -> Unsigned<Integer>,
+        artist_id -> Unsigned<Integer>,
         alias -> Varchar,
     }
 }
 
 table! {
     artist_pages (id) {
-        id -> Integer,
-        artist_id -> Integer,
+        id -> Unsigned<Integer>,
+        artist_id -> Unsigned<Integer>,
         url -> Varchar,
-        page_type -> Integer,
+        page_type -> Unsigned<Integer>,
         added_at -> Timestamp,
         last_update -> Timestamp,
         active -> Bool,
@@ -27,9 +27,9 @@ table! {
 
 table! {
     artist_posts (id) {
-        id -> Integer,
-        artist_id -> Integer,
-        image_id -> Integer,
+        id -> Unsigned<Integer>,
+        artist_id -> Unsigned<Integer>,
+        image_id -> Unsigned<Integer>,
         source_url -> Varchar,
         direct_url -> Nullable<Varchar>,
         created_at -> Timestamp,
@@ -38,10 +38,10 @@ table! {
 
 table! {
     images (id) {
-        id -> Integer,
+        id -> Unsigned<Integer>,
         blob -> Longblob,
-        width -> Integer,
-        height -> Integer,
+        width -> Unsigned<Integer>,
+        height -> Unsigned<Integer>,
         perceptual_hash -> Binary,
         file_type -> Varchar,
     }
@@ -49,7 +49,7 @@ table! {
 
 table! {
     page_types (id) {
-        id -> Integer,
+        id -> Unsigned<Integer>,
         name -> Varchar,
         regex -> Varchar,
     }

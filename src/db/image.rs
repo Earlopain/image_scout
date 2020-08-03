@@ -7,10 +7,10 @@ use std::error::Error;
 #[derive(Queryable, Insertable)]
 #[table_name = "images"]
 pub struct Image {
-    pub id: i32,
+    pub id: u32,
     pub blob: Vec<u8>,
-    pub width: i32,
-    pub height: i32,
+    pub width: u32,
+    pub height: u32,
     pub perceptual_hash: Vec<u8>,
     pub file_type: String,
 }

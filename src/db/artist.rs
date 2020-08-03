@@ -9,7 +9,7 @@ use std::error::Error;
 #[derive(Serialize, Deserialize, Queryable, Insertable)]
 #[table_name = "artists"]
 pub struct Artist {
-    pub id: i32,
+    pub id: u32,
     pub name: String,
 }
 

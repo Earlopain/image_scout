@@ -19,6 +19,7 @@ pub struct ArtistPostNoBlob {
     pub page_type: u32,
     pub source_url: String,
     pub direct_url: Option<String>,
+    pub file_name: String,
     pub width: u32,
     pub height: u32,
     pub perceptual_hash: Vec<u8>,
@@ -34,6 +35,7 @@ pub struct ArtistPost {
     pub page_type: u32,
     pub source_url: String,
     pub direct_url: Option<String>,
+    pub file_name: String,
     pub blob: Vec<u8>,
     pub width: u32,
     pub height: u32,
@@ -68,6 +70,7 @@ impl ArtistPost {
             artist_id,
             page_type,
             source_url,
+            file_name: get_file_name_from_url(&direct_url),
             direct_url: Some(direct_url),
             blob: image_blob,
             width: image_info.width,
@@ -103,6 +106,7 @@ impl ArtistPost {
                 columns::page_type,
                 columns::source_url,
                 columns::direct_url,
+                columns::file_name,
                 columns::width,
                 columns::height,
                 columns::perceptual_hash,
@@ -123,7 +127,9 @@ fn get_image_info(img_data: &Vec<u8>) -> ImageInfo {
         .first()
         .unwrap();
 
-    let hasher = HasherConfig::with_bytes_type::<[u8; 32]>().hash_size(16,16).to_hasher();
+    let hasher = HasherConfig::with_bytes_type::<[u8; 32]>()
+        .hash_size(16, 16)
+        .to_hasher();
     let hash = hasher.hash_image(&image);
 
     ImageInfo {
@@ -132,4 +138,14 @@ fn get_image_info(img_data: &Vec<u8>) -> ImageInfo {
         file_type: image_type.to_string(),
         perceptual_hash: hash.as_bytes().to_vec(),
     }
+}
+
+fn get_file_name_from_url(url: &String) -> String {
+    url.split("/")
+        .last()
+        .unwrap()
+        .split("?")
+        .next()
+        .unwrap()
+        .to_string()
 }

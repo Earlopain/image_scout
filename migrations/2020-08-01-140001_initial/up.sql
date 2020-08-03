@@ -52,6 +52,7 @@ CREATE TABLE artist_posts (
 	page_type INTEGER UNSIGNED NOT NULL,
 	source_url varchar(255) NOT NULL,
 	direct_url varchar(255) NULL,
+    file_name varchar(100) NOT NULL,
     `blob` LONGBLOB NOT NULL,
 	width INTEGER UNSIGNED NOT NULL,
 	height INTEGER UNSIGNED NOT NULL,

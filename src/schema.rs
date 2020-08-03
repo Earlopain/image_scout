@@ -32,6 +32,7 @@ table! {
         page_type -> Unsigned<Integer>,
         source_url -> Varchar,
         direct_url -> Nullable<Varchar>,
+        file_name -> Varchar,
         blob -> Longblob,
         width -> Unsigned<Integer>,
         height -> Unsigned<Integer>,

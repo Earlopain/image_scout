@@ -30,21 +30,14 @@ table! {
         id -> Unsigned<Integer>,
         artist_id -> Unsigned<Integer>,
         page_type -> Unsigned<Integer>,
-        image_id -> Unsigned<Integer>,
         source_url -> Varchar,
         direct_url -> Nullable<Varchar>,
-        created_at -> Timestamp,
-    }
-}
-
-table! {
-    images (id) {
-        id -> Unsigned<Integer>,
         blob -> Longblob,
         width -> Unsigned<Integer>,
         height -> Unsigned<Integer>,
         perceptual_hash -> Binary,
         file_type -> Varchar,
+        created_at -> Timestamp,
     }
 }
 
@@ -60,7 +53,6 @@ joinable!(artist_aliases -> artists (artist_id));
 joinable!(artist_pages -> artists (artist_id));
 joinable!(artist_pages -> page_types (page_type));
 joinable!(artist_posts -> artists (artist_id));
-joinable!(artist_posts -> images (image_id));
 joinable!(artist_posts -> page_types (page_type));
 
 allow_tables_to_appear_in_same_query!(
@@ -68,6 +60,5 @@ allow_tables_to_appear_in_same_query!(
     artist_aliases,
     artist_pages,
     artist_posts,
-    images,
     page_types,
 );

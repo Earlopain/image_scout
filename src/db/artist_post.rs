@@ -6,16 +6,17 @@ use diesel::prelude::*;
 use image;
 use image::GenericImageView;
 use img_hash::HasherConfig;
+use serde::{Deserialize, Serialize};
 use std::error::Error;
 
-#[derive(Queryable, Insertable)]
+#[derive(Serialize, Deserialize, Queryable, Insertable)]
 #[table_name = "artist_posts"]
 pub struct ArtistPost {
     pub id: u32,
     pub artist_id: u32,
     pub page_type: u32,
     pub source_url: String,
-    pub direct_url: String,
+    pub direct_url: Option<String>,
     pub blob: Vec<u8>,
     pub width: u32,
     pub height: u32,
@@ -50,7 +51,7 @@ impl ArtistPost {
             artist_id,
             page_type,
             source_url,
-            direct_url,
+            direct_url: Some(direct_url),
             blob: image_blob,
             width: image_info.width,
             height: image_info.height,
@@ -63,6 +64,15 @@ impl ArtistPost {
             .values(&post)
             .execute(connection)?;
         Ok(())
+    }
+
+    pub fn get_by_id(
+        search_for: &u32,
+        connection: &MysqlConnection,
+    ) -> Result<ArtistPost, diesel::result::Error> {
+        artist_posts::table
+            .filter(artist_posts::columns::id.eq(search_for))
+            .first(connection)
     }
 }
 

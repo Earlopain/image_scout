@@ -9,12 +9,12 @@ extern crate diesel;
 extern crate image;
 extern crate img_hash;
 
-use rocket_contrib::json::Json;
 use rocket_contrib::serve::StaticFiles;
 use rocket_contrib::templates::Template;
 
 use std::collections::HashMap;
 
+mod api;
 mod db;
 mod schema;
 mod seeding;
@@ -26,16 +26,12 @@ fn compare() -> Template {
     Template::render("compare", context)
 }
 
-#[get("/artist/<name>")]
-fn artist(name: String, conn: db::Connection) -> Json<db::artist::Artist> {
-    Json(db::artist::Artist::get_by_name(&name, &conn).unwrap())
-}
-
 fn main() {
     rocket::ignite()
         .attach(Template::fairing())
         .attach(db::Connection::fairing())
-        .mount("/", routes![compare, seeding::route, artist])
+        .mount("/", routes![compare, seeding::route])
+        .mount("/api", api::routes())
         .mount("/static", StaticFiles::from("static"))
         .launch();
 }

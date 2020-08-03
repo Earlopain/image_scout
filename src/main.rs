@@ -6,6 +6,8 @@ extern crate rocket;
 extern crate rocket_contrib;
 #[macro_use]
 extern crate diesel;
+extern crate image;
+extern crate img_hash;
 
 use rocket_contrib::json::Json;
 use rocket_contrib::serve::StaticFiles;

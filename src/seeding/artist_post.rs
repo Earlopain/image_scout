@@ -18,7 +18,7 @@ pub fn insert(conn: &Connection) -> Result<(), Box<dyn Error>> {
     )?;
     ArtistPost::create(
         1,
-        1,
+        2,
         "".to_string(),
         "https://d.facdn.net/art/kenket/1587158288/1587158288.kenket_freefall.jpg".to_string(),
         dt,

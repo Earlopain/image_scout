@@ -62,13 +62,15 @@ COLLATE=utf8mb4_unicode_ci;
 CREATE TABLE artist_posts (
 	id INTEGER UNSIGNED auto_increment NOT NULL,
 	artist_id INTEGER UNSIGNED NOT NULL,
+	page_type INTEGER UNSIGNED NOT NULL,
 	image_id INTEGER UNSIGNED NOT NULL,
 	source_url varchar(255) NOT NULL,
 	direct_url varchar(255) NULL,
 	created_at TIMESTAMP NOT NULL,
 	CONSTRAINT artist_posts_PK PRIMARY KEY (id),
 	CONSTRAINT artist_posts_FK FOREIGN KEY (artist_id) REFERENCES artists(id) ON DELETE CASCADE,
-	CONSTRAINT artist_posts_FK_1 FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE
+	CONSTRAINT artist_posts_FK_1 FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE,
+	CONSTRAINT artist_posts_FK_2 FOREIGN KEY (page_type) REFERENCES page_types(id) ON DELETE CASCADE
 )
 ENGINE=InnoDB
 DEFAULT CHARSET=utf8mb4

@@ -29,6 +29,7 @@ table! {
     artist_posts (id) {
         id -> Unsigned<Integer>,
         artist_id -> Unsigned<Integer>,
+        page_type -> Unsigned<Integer>,
         image_id -> Unsigned<Integer>,
         source_url -> Varchar,
         direct_url -> Nullable<Varchar>,
@@ -60,6 +61,7 @@ joinable!(artist_pages -> artists (artist_id));
 joinable!(artist_pages -> page_types (page_type));
 joinable!(artist_posts -> artists (artist_id));
 joinable!(artist_posts -> images (image_id));
+joinable!(artist_posts -> page_types (page_type));
 
 allow_tables_to_appear_in_same_query!(
     artists,

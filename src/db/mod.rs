@@ -1,4 +1,5 @@
 pub mod artist;
+pub mod artist_alias;
 pub mod artist_post;
 
 #[database("main")]

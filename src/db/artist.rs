@@ -1,3 +1,4 @@
+use crate::db::artist_alias::ArtistAlias;
 use crate::schema::artists;
 use crate::schema::artists::dsl::*;
 use diesel;
@@ -24,6 +25,14 @@ impl Artist {
             .values(&artist)
             .execute(connection)?;
         Ok(())
+    }
+
+    pub fn add_alias(
+        self: &Self,
+        alias: String,
+        connection: &MysqlConnection,
+    ) -> Result<(), Box<dyn Error>> {
+        ArtistAlias::create(self.id, alias, connection)
     }
 
     pub fn get_by_name(

@@ -74,7 +74,7 @@ impl ArtistPost {
         direct_url: String,
         created_at: DateTime<Utc>,
         connection: &PgConnection,
-    ) -> Result<(), Box<dyn Error>> {
+    ) -> Result<ArtistPostNoBlob, Box<dyn Error>> {
         let request = reqwest::blocking::get(&direct_url);
         let image_blob = request?.bytes()?.to_vec();
 
@@ -94,10 +94,21 @@ impl ArtistPost {
             created_at,
         };
 
-        diesel::insert_into(artist_posts::table)
+        let inserted = diesel::insert_into(artist_posts::table)
             .values(&post)
-            .execute(connection)?;
-        Ok(())
+            .returning((columns::id,
+                       columns::artist_id,
+                       columns::page_type,
+                       columns::source_url,
+                       columns::direct_url,
+                       columns::file_name,
+                       columns::width,
+                       columns::height,
+                       columns::perceptual_hash,
+                       columns::file_type,
+                       columns::created_at,))
+            .get_result(connection)?;
+        Ok(inserted)
     }
 
     pub fn get_by_id(

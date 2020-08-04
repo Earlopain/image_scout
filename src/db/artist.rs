@@ -20,20 +20,20 @@ pub struct Artist {
 }
 
 impl Artist {
-    pub fn create(artist_name: String, connection: &PgConnection) -> Result<(), Box<dyn Error>> {
+    pub fn create(artist_name: String, connection: &PgConnection) -> Result<Artist, Box<dyn Error>> {
         let artist = NewArtist { name: artist_name };
 
-        diesel::insert_into(artists::table)
+        let inserted = diesel::insert_into(artists::table)
             .values(&artist)
-            .execute(connection)?;
-        Ok(())
+            .get_result(connection)?;
+        Ok(inserted)
     }
 
     pub fn add_alias(
         self: &Self,
         alias: String,
         connection: &PgConnection,
-    ) -> Result<(), Box<dyn Error>> {
+    ) -> Result<ArtistAlias, Box<dyn Error>> {
         ArtistAlias::create(self.id, alias, connection)
     }
 

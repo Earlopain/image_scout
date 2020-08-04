@@ -25,13 +25,13 @@ impl ArtistAlias {
         artist_id: i64,
         alias: String,
         connection: &PgConnection,
-    ) -> Result<(), Box<dyn Error>> {
+    ) -> Result<ArtistAlias, Box<dyn Error>> {
         let alias = NewArtistAlias { artist_id, alias };
 
-        diesel::insert_into(artist_aliases::table)
+        let inserted = diesel::insert_into(artist_aliases::table)
             .values(&alias)
-            .execute(connection)?;
-        Ok(())
+            .get_result(connection)?;
+        Ok(inserted)
     }
 
     pub fn get_by_name(

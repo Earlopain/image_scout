@@ -1,3 +1,4 @@
+use crate::api::SingleResult;
 use crate::db;
 use chrono::NaiveDateTime;
 use rocket_contrib::json::Json;
@@ -20,19 +21,23 @@ pub struct ApiArtistPost {
 }
 
 #[get("/artist_post/<id>")]
-pub fn route(id: u32, conn: db::Connection) -> Json<ApiArtistPost> {
-    let post = db::artist_post::ArtistPost::get_by_id_no_blob(&id, &conn).unwrap();
-    Json(ApiArtistPost {
-        id: post.id,
-        artist_id: post.artist_id,
-        page_type: post.page_type,
-        source_url: post.source_url,
-        direct_url: post.direct_url,
-        file_name: post.file_name,
-        width: post.width,
-        height: post.height,
-        perceptual_hash: base64::encode(&post.perceptual_hash),
-        file_type: post.file_type,
-        created_at: post.created_at,
-    })
+pub fn route(id: u32, conn: db::Connection) -> Json<SingleResult<ApiArtistPost>> {
+    let result = db::artist_post::ArtistPost::get_by_id_no_blob(&id, &conn);
+
+    return match result {
+        Ok(post) => SingleResult::success(ApiArtistPost {
+            id: post.id,
+            artist_id: post.artist_id,
+            page_type: post.page_type,
+            source_url: post.source_url,
+            direct_url: post.direct_url,
+            file_name: post.file_name,
+            width: post.width,
+            height: post.height,
+            perceptual_hash: base64::encode(&post.perceptual_hash),
+            file_type: post.file_type,
+            created_at: post.created_at,
+        }),
+        Err(e) => SingleResult::error(e.to_string()),
+    };
 }

@@ -1,7 +1,43 @@
 use rocket;
+use rocket_contrib::json::Json;
 mod artist;
 mod artist_post;
 mod image_proxy;
+use serde::{Deserialize, Serialize};
+
+#[derive(Serialize, Deserialize)]
+pub struct SingleResult<T> {
+    success: bool,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    error: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    result: Option<T>,
+}
+
+impl<T> SingleResult<T> {
+    fn error(error: String) -> Json<SingleResult<T>> {
+        Json(SingleResult::<T> {
+            success: false,
+            error: Some(error),
+            result: None,
+        })
+    }
+
+    fn success(result: T) -> Json<SingleResult<T>> {
+        Json(SingleResult::<T> {
+            success: true,
+            error: None,
+            result: Some(result),
+        })
+    }
+
+    fn make(result: Result<T, diesel::result::Error>) -> Json<SingleResult<T>> {
+        return match result {
+            Ok(json) => SingleResult::success(json),
+            Err(e) => SingleResult::error(e.to_string()),
+        };
+    }
+}
 
 pub fn routes() -> std::vec::Vec<rocket::Route> {
     return routes![artist::route, artist_post::route, image_proxy::route];

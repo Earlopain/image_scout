@@ -1,4 +1,5 @@
 use crate::db::artist_alias::ArtistAlias;
+use crate::db::artist_post::{ArtistPost, ArtistPostNoBlob};
 use crate::schema::artists;
 use crate::schema::artists::dsl::*;
 use diesel;
@@ -20,7 +21,10 @@ pub struct Artist {
 }
 
 impl Artist {
-    pub fn create(artist_name: String, connection: &PgConnection) -> Result<Artist, Box<dyn Error>> {
+    pub fn create(
+        artist_name: String,
+        connection: &PgConnection,
+    ) -> Result<Artist, Box<dyn Error>> {
         let artist = NewArtist { name: artist_name };
 
         let inserted = diesel::insert_into(artists::table)
@@ -35,6 +39,17 @@ impl Artist {
         connection: &PgConnection,
     ) -> Result<ArtistAlias, Box<dyn Error>> {
         ArtistAlias::create(self.id, alias, connection)
+    }
+
+    pub fn add_post(
+        self: &Self,
+        page_type: i64,
+        source_url: String,
+        direct_url: String,
+        created_at: chrono::DateTime<chrono::Utc>,
+        connection: &PgConnection,
+    ) -> Result<ArtistPostNoBlob, Box<dyn Error>> {
+        ArtistPost::create(self.id, page_type, source_url, direct_url, created_at, connection)
     }
 
     pub fn get_by_name(

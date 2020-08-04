@@ -1,19 +1,26 @@
-mod artist;
-mod artist_alias;
-mod artist_post;
-
+use crate::db::artist::Artist;
 use crate::db::Connection;
 use rocket::get;
 
 #[get("/seeding")]
-pub fn route(conn: Connection) -> &'static str {
-    if artist::insert(&conn).is_err() {
-        "Failed to seed artists"
-    } else if artist_alias::insert(&conn).is_err() {
-        "Failed to seed artist aliases"
-    } else if artist_post::insert(&conn).is_err() {
-        "Failed to seed images"
-    } else {
-        "Success"
-    }
+pub fn route(conn: Connection) -> Result<(), Box<dyn std::error::Error>> {
+    let time = chrono::Utc::now();
+    let kenket = Artist::create("kenket".to_string(), &conn)?;
+    kenket.add_alias("kenketAlias1".to_string(), &conn)?;
+    kenket.add_alias("kenketAlias2".to_string(), &conn)?;
+    kenket.add_post(
+        1,
+        "".to_string(),
+        "https://pbs.twimg.com/media/EV1cvprUwAIDB4F?format=jpg&name=orig".to_string(),
+        time,
+        &conn,
+    )?;
+    kenket.add_post(
+        2,
+        "".to_string(),
+        "https://d.facdn.net/art/kenket/1587158288/1587158288.kenket_freefall.jpg".to_string(),
+        time,
+        &conn,
+    )?;
+    Ok(())
 }

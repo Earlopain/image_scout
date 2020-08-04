@@ -3,4 +3,4 @@ pub mod artist_alias;
 pub mod artist_post;
 
 #[database("main")]
-pub struct Connection(rocket_contrib::databases::diesel::MysqlConnection);
+pub struct Connection(rocket_contrib::databases::diesel::PgConnection);

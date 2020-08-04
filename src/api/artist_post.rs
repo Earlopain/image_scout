@@ -1,27 +1,27 @@
 use crate::api::SingleResult;
 use crate::db;
-use chrono::NaiveDateTime;
+use chrono::{DateTime, Utc};
 use rocket_contrib::json::Json;
 use serde::{Deserialize, Serialize};
 
 //TODO copying struct fields must be easier than this
 #[derive(Serialize, Deserialize, Queryable)]
 pub struct ApiArtistPost {
-    pub id: u32,
-    pub artist_id: u32,
-    pub page_type: u32,
+    pub id: i64,
+    pub artist_id: i64,
+    pub page_type: i64,
     pub source_url: String,
     pub direct_url: Option<String>,
     pub file_name: String,
-    pub width: u32,
-    pub height: u32,
+    pub width: i64,
+    pub height: i64,
     pub perceptual_hash: String,
     pub file_type: String,
-    pub created_at: NaiveDateTime,
+    pub created_at: DateTime<Utc>,
 }
 
 #[get("/artist_post/<id>")]
-pub fn route(id: u32, conn: db::Connection) -> Json<SingleResult<ApiArtistPost>> {
+pub fn route(id: i64, conn: db::Connection) -> Json<SingleResult<ApiArtistPost>> {
     let result = db::artist_post::ArtistPost::get_by_id_no_blob(&id, &conn);
 
     return match result {

@@ -1,50 +1,50 @@
 table! {
-    artists (id) {
-        id -> Unsigned<Integer>,
-        name -> Varchar,
-    }
-}
-
-table! {
     artist_aliases (id) {
-        id -> Unsigned<Integer>,
-        artist_id -> Unsigned<Integer>,
+        id -> Int8,
+        artist_id -> Int8,
         alias -> Varchar,
     }
 }
 
 table! {
     artist_pages (id) {
-        id -> Unsigned<Integer>,
-        artist_id -> Unsigned<Integer>,
+        id -> Int8,
+        artist_id -> Int8,
         url -> Varchar,
-        page_type -> Unsigned<Integer>,
-        added_at -> Timestamp,
-        last_update -> Timestamp,
+        page_type -> Int8,
+        added_at -> Timestamptz,
+        last_update -> Timestamptz,
         active -> Bool,
     }
 }
 
 table! {
     artist_posts (id) {
-        id -> Unsigned<Integer>,
-        artist_id -> Unsigned<Integer>,
-        page_type -> Unsigned<Integer>,
+        id -> Int8,
+        artist_id -> Int8,
+        page_type -> Int8,
         source_url -> Varchar,
         direct_url -> Nullable<Varchar>,
         file_name -> Varchar,
-        blob -> Longblob,
-        width -> Unsigned<Integer>,
-        height -> Unsigned<Integer>,
-        perceptual_hash -> Binary,
+        blob -> Bytea,
+        width -> Int8,
+        height -> Int8,
+        perceptual_hash -> Bytea,
         file_type -> Varchar,
-        created_at -> Timestamp,
+        created_at -> Timestamptz,
+    }
+}
+
+table! {
+    artists (id) {
+        id -> Int8,
+        name -> Varchar,
     }
 }
 
 table! {
     page_types (id) {
-        id -> Unsigned<Integer>,
+        id -> Int8,
         name -> Varchar,
         regex -> Varchar,
     }
@@ -57,9 +57,9 @@ joinable!(artist_posts -> artists (artist_id));
 joinable!(artist_posts -> page_types (page_type));
 
 allow_tables_to_appear_in_same_query!(
-    artists,
     artist_aliases,
     artist_pages,
     artist_posts,
+    artists,
     page_types,
 );

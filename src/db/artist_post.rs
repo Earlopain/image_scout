@@ -1,8 +1,8 @@
 use crate::schema::artist_posts;
 use artist_posts::columns;
-use chrono::NaiveDateTime;
+use chrono::{DateTime, Utc};
 use diesel;
-use diesel::mysql::MysqlConnection;
+use diesel::pg::PgConnection;
 use diesel::prelude::*;
 use image;
 use image::GenericImageView;
@@ -10,63 +10,77 @@ use img_hash::HasherConfig;
 use serde::{Deserialize, Serialize};
 use std::error::Error;
 
-//TODO instead of creating almost the same struct twice
-//they should somehow inherit their fields
-#[derive(Serialize, Deserialize, Queryable)]
-pub struct ArtistPostNoBlob {
-    pub id: u32,
-    pub artist_id: u32,
-    pub page_type: u32,
-    pub source_url: String,
-    pub direct_url: Option<String>,
-    pub file_name: String,
-    pub width: u32,
-    pub height: u32,
-    pub perceptual_hash: Vec<u8>,
-    pub file_type: String,
-    pub created_at: NaiveDateTime,
-}
-
-#[derive(Serialize, Deserialize, Queryable, Insertable)]
+#[derive(Insertable)]
 #[table_name = "artist_posts"]
-pub struct ArtistPost {
-    pub id: u32,
-    pub artist_id: u32,
-    pub page_type: u32,
+pub struct NewArtistPost {
+    pub artist_id: i64,
+    pub page_type: i64,
     pub source_url: String,
     pub direct_url: Option<String>,
     pub file_name: String,
     pub blob: Vec<u8>,
-    pub width: u32,
-    pub height: u32,
+    pub width: i64,
+    pub height: i64,
     pub perceptual_hash: Vec<u8>,
     pub file_type: String,
-    pub created_at: NaiveDateTime,
+    pub created_at: DateTime<Utc>,
+}
+
+//TODO instead of creating almost the same struct twice
+//they should somehow inherit their fields
+#[derive(Serialize, Deserialize, Queryable)]
+pub struct ArtistPostNoBlob {
+    pub id: i64,
+    pub artist_id: i64,
+    pub page_type: i64,
+    pub source_url: String,
+    pub direct_url: Option<String>,
+    pub file_name: String,
+    pub width: i64,
+    pub height: i64,
+    pub perceptual_hash: Vec<u8>,
+    pub file_type: String,
+    pub created_at: DateTime<Utc>,
+}
+
+#[derive(Serialize, Deserialize, Queryable)]
+pub struct ArtistPost {
+    pub id: i64,
+    pub artist_id: i64,
+    pub page_type: i64,
+    pub source_url: String,
+    pub direct_url: Option<String>,
+    pub file_name: String,
+    pub blob: Vec<u8>,
+    pub width: i64,
+    pub height: i64,
+    pub perceptual_hash: Vec<u8>,
+    pub file_type: String,
+    pub created_at: DateTime<Utc>,
 }
 
 struct ImageInfo {
-    width: u32,
-    height: u32,
+    width: i64,
+    height: i64,
     perceptual_hash: Vec<u8>,
     file_type: String,
 }
 
 impl ArtistPost {
     pub fn create(
-        artist_id: u32,
-        page_type: u32,
+        artist_id: i64,
+        page_type: i64,
         source_url: String,
         direct_url: String,
-        created_at: NaiveDateTime,
-        connection: &MysqlConnection,
+        created_at: DateTime<Utc>,
+        connection: &PgConnection,
     ) -> Result<(), Box<dyn Error>> {
         let request = reqwest::blocking::get(&direct_url);
         let image_blob = request?.bytes()?.to_vec();
 
         let image_info = get_image_info(&image_blob);
 
-        let post = ArtistPost {
-            id: 0,
+        let post = NewArtistPost {
             artist_id,
             page_type,
             source_url,
@@ -87,8 +101,8 @@ impl ArtistPost {
     }
 
     pub fn get_by_id(
-        search_for: &u32,
-        connection: &MysqlConnection,
+        search_for: &i64,
+        connection: &PgConnection,
     ) -> Result<ArtistPost, diesel::result::Error> {
         artist_posts::table
             .filter(columns::id.eq(search_for))
@@ -96,8 +110,8 @@ impl ArtistPost {
     }
 
     pub fn get_by_id_no_blob(
-        search_for: &u32,
-        connection: &MysqlConnection,
+        search_for: &i64,
+        connection: &PgConnection,
     ) -> Result<ArtistPostNoBlob, diesel::result::Error> {
         artist_posts::table
             .select((
@@ -133,8 +147,8 @@ fn get_image_info(img_data: &Vec<u8>) -> ImageInfo {
     let hash = hasher.hash_image(&image);
 
     ImageInfo {
-        width: dimensions.0,
-        height: dimensions.1,
+        width: i64::from(dimensions.0),
+        height: i64::from(dimensions.1),
         file_type: image_type.to_string(),
         perceptual_hash: hash.as_bytes().to_vec(),
     }

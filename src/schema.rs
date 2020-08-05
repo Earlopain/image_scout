@@ -10,8 +10,8 @@ table! {
     artist_pages (id) {
         id -> Int8,
         artist_id -> Int8,
-        url -> Varchar,
         page_type -> Int8,
+        url -> Varchar,
         added_at -> Timestamptz,
         last_update -> Timestamptz,
         active -> Bool,

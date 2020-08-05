@@ -25,8 +25,8 @@ CREATE UNIQUE INDEX idx_16613_page_types_un ON page_types USING btree (name);
 CREATE TABLE artist_pages (
 	id bigserial NOT NULL,
 	artist_id int8 NOT NULL,
-	url varchar(100) NOT NULL,
 	page_type int8 NOT NULL,
+	url varchar(100) NOT NULL,
 	added_at timestamptz NOT NULL,
 	last_update timestamptz NOT NULL,
 	active bool NOT NULL,

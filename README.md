@@ -20,9 +20,7 @@ Create a file called `.env`. This will contain the variables used to connect to 
 `DATABASE_URL` will be used by diesel_cli to execute the migrations. Format: `postgres://user:pass@ip:port/database_name`\
 `ROCKET_DATABASES` will be used by rocket to use the connection the program. Format: `{main={url='postgres://user:pass@ip:port/database_name'}}`
 
-You can alternativly put a filename instead of the postgres url. This will not need a database server.
-
 Run `diesel migration run` to populate the database.\
 After that calling `just run` will start up the rocket webserver and all should be good to go.
 
-Navigating to `localhost:8000/seeding` will populate the database with testing data.
+Calling `just reseed` after the migrations have been run once will populate the database with testing data`

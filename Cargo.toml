@@ -1,5 +1,5 @@
 [package]
-name = "reverser"
+name = "image_scout"
 version = "0.1.0"
 authors = ["Earlopain <earlopain@c5h8no4na.net>"]
 edition = "2018"

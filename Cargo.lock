@@ -836,6 +836,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "image_scout"
+version = "0.1.0"
+dependencies = [
+ "base64 0.12.3",
+ "chrono",
+ "db",
+ "rocket",
+ "rocket_contrib",
+ "serde",
+]
+
+[[package]]
 name = "img_hash"
 version = "3.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1626,18 +1638,6 @@ dependencies = [
  "wasm-bindgen-futures",
  "web-sys",
  "winreg",
-]
-
-[[package]]
-name = "reverser"
-version = "0.1.0"
-dependencies = [
- "base64 0.12.3",
- "chrono",
- "db",
- "rocket",
- "rocket_contrib",
- "serde",
 ]
 
 [[package]]

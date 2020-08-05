@@ -1,4 +1,4 @@
-project_name := "reverser"
+project_name := "image_scout"
 target_folder := "target"
 template_folder := "templates"
 static_folder := "static"

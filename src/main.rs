@@ -10,7 +10,6 @@ use rocket_contrib::templates::Template;
 use std::collections::HashMap;
 
 mod api;
-mod seeding;
 
 #[database("main")]
 pub struct Connection(rocket_contrib::databases::diesel::PgConnection);
@@ -27,7 +26,7 @@ fn main() {
     rocket::ignite()
         .attach(Template::fairing())
         .attach(Connection::fairing())
-        .mount("/", routes![compare, seeding::route])
+        .mount("/", routes![compare])
         .mount("/api", api::api_routes())
         .mount("/static", api::proxy_route())
         .mount("/static", StaticFiles::from("static"))

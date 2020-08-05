@@ -1,11 +1,12 @@
-use db::artist::Artist;
-use crate::Connection;
-use rocket::get;
+use db;
+use diesel::Connection;
+use diesel::pg::PgConnection;
+use std::env;
 
-#[get("/seeding")]
-pub fn route(conn: Connection) -> Result<(), Box<dyn std::error::Error>> {
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let conn = get_connection();
     let time = chrono::Utc::now();
-    let kenket = Artist::create("kenket", &conn)?;
+    let kenket = db::artist::Artist::create("kenket", &conn)?;
     kenket.add_alias("tessgarman", &conn)?;
     kenket.add_alias("ketsketch", &conn)?;
     kenket.add_post(
@@ -23,4 +24,9 @@ pub fn route(conn: Connection) -> Result<(), Box<dyn std::error::Error>> {
         &conn,
     )?;
     Ok(())
+}
+
+fn get_connection() -> PgConnection {
+    let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
+    PgConnection::establish(&database_url).expect(&format!("Error connecting to {}", database_url))
 }

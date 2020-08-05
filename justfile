@@ -6,6 +6,10 @@ static_folder := "static"
 run:
     cargo run
 
+reseed:
+    diesel migration redo
+    cargo run -p seeding
+
 build: (_sync_resources "debug")
     cargo build
     just _make_executable debug

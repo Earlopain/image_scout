@@ -21,4 +21,7 @@ default-features = false
 features = ["serve", "tera_templates", "diesel_postgres_pool", "json"]
 
 [workspace]
-members = ["db_lib"]
+members = [
+    "db_lib",
+    "seeding"
+]

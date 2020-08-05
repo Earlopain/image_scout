@@ -1827,6 +1827,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "seeding"
+version = "0.1.0"
+dependencies = [
+ "chrono",
+ "db",
+ "diesel",
+]
+
+[[package]]
 name = "serde"
 version = "1.0.114"
 source = "registry+https://github.com/rust-lang/crates.io-index"

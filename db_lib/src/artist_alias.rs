@@ -3,6 +3,7 @@ use crate::schema::artist_aliases::dsl;
 use diesel;
 use diesel::pg::PgConnection;
 use diesel::prelude::*;
+#[cfg(feature = "json")]
 use serde::{Deserialize, Serialize};
 use std::error::Error;
 
@@ -13,7 +14,8 @@ pub struct NewArtistAlias<'a> {
     pub alias: &'a str,
 }
 
-#[derive(Serialize, Deserialize, Queryable)]
+#[cfg_attr(feature = "json", derive(Serialize, Deserialize))]
+#[derive(Queryable)]
 pub struct ArtistAlias {
     pub id: i64,
     pub artist_id: i64,

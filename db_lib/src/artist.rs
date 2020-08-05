@@ -6,6 +6,7 @@ use crate::schema::artists::dsl::*;
 use diesel;
 use diesel::pg::PgConnection;
 use diesel::prelude::*;
+#[cfg(feature = "json")]
 use serde::{Deserialize, Serialize};
 use std::error::Error;
 
@@ -15,7 +16,8 @@ pub struct NewArtist<'a> {
     pub name: &'a str,
 }
 
-#[derive(Serialize, Deserialize, Queryable)]
+#[cfg_attr(feature = "json", derive(Serialize, Deserialize))]
+#[derive(Queryable)]
 pub struct Artist {
     pub id: i64,
     pub name: String,

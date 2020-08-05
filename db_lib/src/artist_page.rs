@@ -4,6 +4,7 @@ use chrono::{DateTime, Utc};
 use diesel;
 use diesel::pg::PgConnection;
 use diesel::prelude::*;
+#[cfg(feature = "json")]
 use serde::{Deserialize, Serialize};
 use std::error::Error;
 
@@ -18,7 +19,8 @@ pub struct NewArtistPage<'a> {
     pub active: bool,
 }
 
-#[derive(Serialize, Deserialize, Queryable)]
+#[cfg_attr(feature = "json", derive(Serialize, Deserialize))]
+#[derive(Queryable)]
 pub struct ArtistPage {
     pub id: i64,
     pub artist_id: i64,

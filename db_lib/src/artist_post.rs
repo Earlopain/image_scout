@@ -29,7 +29,8 @@ pub struct NewArtistPost<'a> {
 
 //TODO instead of creating almost the same struct twice
 //they should somehow inherit their fields
-#[derive(Serialize, Deserialize, Queryable)]
+#[cfg_attr(feature = "json", derive(Serialize, Deserialize))]
+#[derive(Queryable)]
 pub struct ArtistPostNoBlob {
     pub id: i64,
     pub artist_id: i64,
@@ -58,7 +59,7 @@ pub struct ArtistPostOnlyThumb {
     pub file_type: String,
 }
 
-#[derive(Serialize, Deserialize, Queryable)]
+#[derive(Queryable)]
 pub struct ArtistPost {
     pub id: i64,
     pub artist_id: i64,

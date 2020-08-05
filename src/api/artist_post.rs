@@ -1,6 +1,6 @@
 use crate::api::SingleResult;
-use db;
 use chrono::{DateTime, Utc};
+use db;
 use rocket_contrib::json::Json;
 use serde::{Deserialize, Serialize};
 

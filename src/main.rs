@@ -14,7 +14,6 @@ mod api;
 #[database("main")]
 pub struct Connection(rocket_contrib::databases::diesel::PgConnection);
 
-
 #[get("/")]
 fn compare() -> Template {
     let mut context = HashMap::<String, String>::new();

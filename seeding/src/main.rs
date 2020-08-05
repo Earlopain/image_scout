@@ -1,6 +1,6 @@
 use db;
-use diesel::Connection;
 use diesel::pg::PgConnection;
+use diesel::Connection;
 use std::env;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {

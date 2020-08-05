@@ -39,6 +39,10 @@ impl<T> SingleResult<T> {
     }
 }
 
-pub fn routes() -> std::vec::Vec<rocket::Route> {
-    return routes![artist::route, artist_post::route, image_proxy::route];
+pub fn api_routes() -> std::vec::Vec<rocket::Route> {
+    routes![artist::route, artist_post::route, image_proxy::route]
+}
+
+pub fn proxy_route() -> std::vec::Vec<rocket::Route> {
+    routes![image_proxy::route]
 }

@@ -31,7 +31,8 @@ fn main() {
         .attach(Template::fairing())
         .attach(db::Connection::fairing())
         .mount("/", routes![compare, seeding::route])
-        .mount("/api", api::routes())
+        .mount("/api", api::api_routes())
+        .mount("/static", api::proxy_route())
         .mount("/static", StaticFiles::from("static"))
         .launch();
 }

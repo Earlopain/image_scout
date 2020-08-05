@@ -1,4 +1,5 @@
 use crate::db::artist_alias::ArtistAlias;
+use crate::db::artist_page::ArtistPage;
 use crate::db::artist_post::{ArtistPost, ArtistPostNoBlob};
 use crate::schema::artists;
 use crate::schema::artists::dsl::*;
@@ -41,6 +42,17 @@ impl Artist {
         ArtistAlias::create(self.id, alias, connection)
     }
 
+    pub fn add_page(
+        self: &Self,
+        url: &str,
+        connection: &PgConnection,
+    ) -> Result<ArtistPage, Box<dyn Error>> {
+
+        //TODO get page_type from url
+        let page_type = &1;
+        ArtistPage::create(&self.id, page_type, url, connection)
+    }
+
     pub fn add_post(
         self: &Self,
         page_type: i64,
@@ -49,7 +61,9 @@ impl Artist {
         created_at: chrono::DateTime<chrono::Utc>,
         connection: &PgConnection,
     ) -> Result<ArtistPostNoBlob, Box<dyn Error>> {
-        ArtistPost::create(self.id, page_type, source_url, direct_url, created_at, connection)
+        ArtistPost::create(
+            self.id, page_type, source_url, direct_url, created_at, connection,
+        )
     }
 
     pub fn get_by_name(

@@ -27,6 +27,7 @@ table! {
         direct_url -> Nullable<Varchar>,
         file_name -> Varchar,
         blob -> Bytea,
+        thumb -> Bytea,
         width -> Int8,
         height -> Int8,
         perceptual_hash -> Bytea,

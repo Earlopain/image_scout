@@ -45,6 +45,7 @@ CREATE TABLE artist_posts (
 	direct_url varchar(255) NULL DEFAULT NULL::character varying,
 	file_name varchar(100) NOT NULL,
 	"blob" bytea NOT NULL,
+	"thumb" bytea NOT NULL,
 	width int8 NOT NULL,
 	height int8 NOT NULL,
 	perceptual_hash bytea NOT NULL,

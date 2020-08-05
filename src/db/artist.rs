@@ -22,10 +22,7 @@ pub struct Artist {
 }
 
 impl Artist {
-    pub fn create(
-        artist_name: &str,
-        connection: &PgConnection,
-    ) -> Result<Artist, Box<dyn Error>> {
+    pub fn create(artist_name: &str, connection: &PgConnection) -> Result<Artist, Box<dyn Error>> {
         let artist = NewArtist { name: artist_name };
 
         let inserted = diesel::insert_into(artists::table)

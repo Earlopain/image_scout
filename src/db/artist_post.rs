@@ -114,17 +114,19 @@ impl ArtistPost {
 
         let inserted = diesel::insert_into(artist_posts::table)
             .values(&post)
-            .returning((columns::id,
-                       columns::artist_id,
-                       columns::page_type,
-                       columns::source_url,
-                       columns::direct_url,
-                       columns::file_name,
-                       columns::width,
-                       columns::height,
-                       columns::perceptual_hash,
-                       columns::file_type,
-                       columns::created_at,))
+            .returning((
+                columns::id,
+                columns::artist_id,
+                columns::page_type,
+                columns::source_url,
+                columns::direct_url,
+                columns::file_name,
+                columns::width,
+                columns::height,
+                columns::perceptual_hash,
+                columns::file_type,
+                columns::created_at,
+            ))
             .get_result(connection)?;
         Ok(inserted)
     }
@@ -165,11 +167,7 @@ impl ArtistPost {
         connection: &PgConnection,
     ) -> Result<ArtistPostOnlyBlob, diesel::result::Error> {
         artist_posts::table
-            .select((
-                columns::blob,
-                columns::file_name,
-                columns::file_type,
-            ))
+            .select((columns::blob, columns::file_name, columns::file_type))
             .filter(columns::id.eq(search_for))
             .first(connection)
     }
@@ -179,11 +177,7 @@ impl ArtistPost {
         connection: &PgConnection,
     ) -> Result<ArtistPostOnlyThumb, diesel::result::Error> {
         artist_posts::table
-            .select((
-                columns::thumb,
-                columns::file_name,
-                columns::file_type,
-            ))
+            .select((columns::thumb, columns::file_name, columns::file_type))
             .filter(columns::id.eq(search_for))
             .first(connection)
     }
@@ -212,17 +206,18 @@ fn get_image_info(img_data: &Vec<u8>) -> Result<ImageInfo, Box<dyn std::error::E
     })
 }
 
-fn resize_image(image: image::DynamicImage, width: u32, height: u32) -> Result<Vec<u8>, Box<dyn std::error::Error>> {
+fn resize_image(
+    image: image::DynamicImage,
+    width: u32,
+    height: u32,
+) -> Result<Vec<u8>, Box<dyn std::error::Error>> {
     let mut result: Vec<u8> = Vec::new();
-    image.thumbnail(width, height,).write_to(&mut result, image::ImageOutputFormat::Jpeg(85))?;
+    image
+        .thumbnail(width, height)
+        .write_to(&mut result, image::ImageOutputFormat::Jpeg(85))?;
     Ok(result)
 }
 
 fn get_file_name_from_url(url: &str) -> &str {
-    &url.split("/")
-        .last()
-        .unwrap()
-        .split("?")
-        .next()
-        .unwrap()
+    &url.split("/").last().unwrap().split("?").next().unwrap()
 }

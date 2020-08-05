@@ -12,7 +12,7 @@ use std::error::Error;
 #[derive(Insertable)]
 #[table_name = "artists"]
 pub struct NewArtist<'a> {
-    pub name: &'a String,
+    pub name: &'a str,
 }
 
 #[derive(Serialize, Deserialize, Queryable)]
@@ -23,7 +23,7 @@ pub struct Artist {
 
 impl Artist {
     pub fn create(
-        artist_name: &String,
+        artist_name: &str,
         connection: &PgConnection,
     ) -> Result<Artist, Box<dyn Error>> {
         let artist = NewArtist { name: artist_name };
@@ -36,7 +36,7 @@ impl Artist {
 
     pub fn add_alias(
         self: &Self,
-        alias: &String,
+        alias: &str,
         connection: &PgConnection,
     ) -> Result<ArtistAlias, Box<dyn Error>> {
         ArtistAlias::create(&self.id, alias, connection)
@@ -44,7 +44,7 @@ impl Artist {
 
     pub fn add_page(
         self: &Self,
-        url: &String,
+        url: &str,
         connection: &PgConnection,
     ) -> Result<ArtistPage, Box<dyn Error>> {
         //TODO get page_type from url
@@ -55,8 +55,8 @@ impl Artist {
     pub fn add_post(
         self: &Self,
         page_type: &i64,
-        source_url: &String,
-        direct_url: &String,
+        source_url: &str,
+        direct_url: &str,
         created_at: &chrono::DateTime<chrono::Utc>,
         connection: &PgConnection,
     ) -> Result<ArtistPostNoBlob, Box<dyn Error>> {

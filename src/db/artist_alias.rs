@@ -10,7 +10,7 @@ use std::error::Error;
 #[table_name = "artist_aliases"]
 pub struct NewArtistAlias<'a> {
     pub artist_id: &'a i64,
-    pub alias: &'a String,
+    pub alias: &'a str,
 }
 
 #[derive(Serialize, Deserialize, Queryable)]
@@ -23,7 +23,7 @@ pub struct ArtistAlias {
 impl ArtistAlias {
     pub fn create(
         artist_id: &i64,
-        alias: &String,
+        alias: &str,
         connection: &PgConnection,
     ) -> Result<ArtistAlias, Box<dyn Error>> {
         let alias = NewArtistAlias { artist_id, alias };
@@ -35,7 +35,7 @@ impl ArtistAlias {
     }
 
     pub fn get_by_name(
-        search_for: &String,
+        search_for: &str,
         connection: &PgConnection,
     ) -> Result<std::vec::Vec<ArtistAlias>, diesel::result::Error> {
         artist_aliases::table

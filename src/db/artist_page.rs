@@ -12,7 +12,7 @@ use std::error::Error;
 pub struct NewArtistPage<'a> {
     pub artist_id: &'a i64,
     pub page_type: &'a i64,
-    pub url: &'a String,
+    pub url: &'a str,
     pub added_at: DateTime<Utc>,
     pub last_update: DateTime<Utc>,
     pub active: bool,
@@ -33,7 +33,7 @@ impl ArtistPage {
     pub fn create(
         artist_id: &i64,
         page_type: &i64,
-        url: &String,
+        url: &str,
         connection: &PgConnection,
     ) -> Result<ArtistPage, Box<dyn Error>> {
         let page = NewArtistPage {

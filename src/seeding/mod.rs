@@ -5,20 +5,20 @@ use rocket::get;
 #[get("/seeding")]
 pub fn route(conn: Connection) -> Result<(), Box<dyn std::error::Error>> {
     let time = chrono::Utc::now();
-    let kenket = Artist::create(&"kenket".to_string(), &conn)?;
-    kenket.add_alias(&"tessgarman".to_string(), &conn)?;
-    kenket.add_alias(&"ketsketch".to_string(), &conn)?;
+    let kenket = Artist::create("kenket", &conn)?;
+    kenket.add_alias("tessgarman", &conn)?;
+    kenket.add_alias("ketsketch", &conn)?;
     kenket.add_post(
         &1,
-        &"".to_string(),
-        &"https://pbs.twimg.com/media/EV1cvprUwAIDB4F?format=jpg&name=orig".to_string(),
+        "",
+        "https://pbs.twimg.com/media/EV1cvprUwAIDB4F?format=jpg&name=orig",
         &time,
         &conn,
     )?;
     kenket.add_post(
         &2,
-        &"".to_string(),
-        &"https://d.facdn.net/art/kenket/1587158288/1587158288.kenket_freefall.jpg".to_string(),
+        &"",
+        &"https://d.facdn.net/art/kenket/1587158288/1587158288.kenket_freefall.jpg",
         &time,
         &conn,
     )?;

@@ -16,13 +16,13 @@ pub struct NewArtistPost<'a> {
     pub artist_id: &'a i64,
     pub page_type: &'a i64,
     pub source_url: &'a str,
-    pub direct_url: Option<&'a String>,
-    pub file_name: &'a String,
+    pub direct_url: Option<&'a str>,
+    pub file_name: &'a str,
     pub blob: &'a Vec<u8>,
     pub width: &'a i64,
     pub height: &'a i64,
     pub perceptual_hash: &'a Vec<u8>,
-    pub file_type: &'a String,
+    pub file_type: &'a str,
     pub created_at: &'a DateTime<Utc>,
 }
 
@@ -70,8 +70,8 @@ impl ArtistPost {
     pub fn create(
         artist_id: &i64,
         page_type: &i64,
-        source_url: &String,
-        direct_url: &String,
+        source_url: &str,
+        direct_url: &str,
         created_at: &DateTime<Utc>,
         connection: &PgConnection,
     ) -> Result<ArtistPostNoBlob, Box<dyn Error>> {
@@ -84,7 +84,7 @@ impl ArtistPost {
             artist_id,
             page_type,
             source_url,
-            file_name: &get_file_name_from_url(direct_url),
+            file_name: get_file_name_from_url(direct_url),
             direct_url: Some(direct_url),
             blob: &image_blob,
             width: &image_info.width,
@@ -165,12 +165,11 @@ fn get_image_info(img_data: &Vec<u8>) -> ImageInfo {
     }
 }
 
-fn get_file_name_from_url(url: &String) -> String {
-    url.split("/")
+fn get_file_name_from_url(url: &str) -> &str {
+    &url.split("/")
         .last()
         .unwrap()
         .split("?")
         .next()
         .unwrap()
-        .to_string()
 }

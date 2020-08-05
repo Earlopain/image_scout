@@ -1,12 +1,12 @@
-use crate::db;
-use crate::db::artist_post::ArtistPost;
+use db;
+use db::artist_post::ArtistPost;
 use rocket::http::ContentType;
 use rocket::response::{Body, Response};
 use std::convert::TryInto;
 use std::io::Cursor;
 
 #[get("/image/<id>")]
-pub fn route(id: i64, conn: db::Connection) -> Option<Response<'static>> {
+pub fn route(id: i64, conn: crate::Connection) -> Option<Response<'static>> {
     let image = ArtistPost::get_by_id_only_blob(&id, &conn);
     match image {
         Ok(post) => Some(craft_response_success(
@@ -19,7 +19,7 @@ pub fn route(id: i64, conn: db::Connection) -> Option<Response<'static>> {
 }
 
 #[get("/image/thumb/<id>")]
-pub fn route_thumb(id: i64, conn: db::Connection) -> Option<Response<'static>> {
+pub fn route_thumb(id: i64, conn: crate::Connection) -> Option<Response<'static>> {
     let image = ArtistPost::get_by_id_only_thumb(&id, &conn);
     match image {
         Ok(post) => Some(craft_response_success(

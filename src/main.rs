@@ -4,20 +4,17 @@
 extern crate rocket;
 #[macro_use]
 extern crate rocket_contrib;
-#[macro_use]
-extern crate diesel;
-extern crate image;
-extern crate img_hash;
 
 use rocket_contrib::serve::StaticFiles;
 use rocket_contrib::templates::Template;
-
 use std::collections::HashMap;
 
 mod api;
-mod db;
-mod schema;
 mod seeding;
+
+#[database("main")]
+pub struct Connection(rocket_contrib::databases::diesel::PgConnection);
+
 
 #[get("/")]
 fn compare() -> Template {
@@ -29,7 +26,7 @@ fn compare() -> Template {
 fn main() {
     rocket::ignite()
         .attach(Template::fairing())
-        .attach(db::Connection::fairing())
+        .attach(Connection::fairing())
         .mount("/", routes![compare, seeding::route])
         .mount("/api", api::api_routes())
         .mount("/static", api::proxy_route())

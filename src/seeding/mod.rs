@@ -1,5 +1,5 @@
-use crate::db::artist::Artist;
-use crate::db::Connection;
+use db::artist::Artist;
+use crate::Connection;
 use rocket::get;
 
 #[get("/seeding")]

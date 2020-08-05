@@ -31,7 +31,7 @@ impl<T> SingleResult<T> {
         })
     }
 
-    fn make(result: Result<T, diesel::result::Error>) -> Json<SingleResult<T>> {
+    fn make(result: Result<T, rocket_contrib::databases::diesel::result::Error>) -> Json<SingleResult<T>> {
         return match result {
             Ok(json) => SingleResult::success(json),
             Err(e) => SingleResult::error(e.to_string()),

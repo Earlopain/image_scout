@@ -1,6 +1,6 @@
-use crate::db::artist_alias::ArtistAlias;
-use crate::db::artist_page::ArtistPage;
-use crate::db::artist_post::{ArtistPost, ArtistPostNoBlob};
+use crate::artist_alias::ArtistAlias;
+use crate::artist_page::ArtistPage;
+use crate::artist_post::{ArtistPost, ArtistPostNoBlob};
 use crate::schema::artists;
 use crate::schema::artists::dsl::*;
 use diesel;

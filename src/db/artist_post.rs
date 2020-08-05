@@ -12,18 +12,18 @@ use std::error::Error;
 
 #[derive(Insertable)]
 #[table_name = "artist_posts"]
-pub struct NewArtistPost {
-    pub artist_id: i64,
-    pub page_type: i64,
-    pub source_url: String,
-    pub direct_url: Option<String>,
-    pub file_name: String,
-    pub blob: Vec<u8>,
-    pub width: i64,
-    pub height: i64,
-    pub perceptual_hash: Vec<u8>,
-    pub file_type: String,
-    pub created_at: DateTime<Utc>,
+pub struct NewArtistPost<'a> {
+    pub artist_id: &'a i64,
+    pub page_type: &'a i64,
+    pub source_url: &'a str,
+    pub direct_url: Option<&'a String>,
+    pub file_name: &'a String,
+    pub blob: &'a Vec<u8>,
+    pub width: &'a i64,
+    pub height: &'a i64,
+    pub perceptual_hash: &'a Vec<u8>,
+    pub file_type: &'a String,
+    pub created_at: &'a DateTime<Utc>,
 }
 
 //TODO instead of creating almost the same struct twice
@@ -68,14 +68,14 @@ struct ImageInfo {
 
 impl ArtistPost {
     pub fn create(
-        artist_id: i64,
-        page_type: i64,
-        source_url: String,
-        direct_url: String,
-        created_at: DateTime<Utc>,
+        artist_id: &i64,
+        page_type: &i64,
+        source_url: &String,
+        direct_url: &String,
+        created_at: &DateTime<Utc>,
         connection: &PgConnection,
     ) -> Result<ArtistPostNoBlob, Box<dyn Error>> {
-        let request = reqwest::blocking::get(&direct_url);
+        let request = reqwest::blocking::get(direct_url);
         let image_blob = request?.bytes()?.to_vec();
 
         let image_info = get_image_info(&image_blob);
@@ -84,13 +84,13 @@ impl ArtistPost {
             artist_id,
             page_type,
             source_url,
-            file_name: get_file_name_from_url(&direct_url),
+            file_name: &get_file_name_from_url(direct_url),
             direct_url: Some(direct_url),
-            blob: image_blob,
-            width: image_info.width,
-            height: image_info.height,
-            perceptual_hash: image_info.perceptual_hash,
-            file_type: image_info.file_type,
+            blob: &image_blob,
+            width: &image_info.width,
+            height: &image_info.height,
+            perceptual_hash: &image_info.perceptual_hash,
+            file_type: &image_info.file_type,
             created_at,
         };
 

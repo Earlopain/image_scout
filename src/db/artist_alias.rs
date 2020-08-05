@@ -8,9 +8,9 @@ use std::error::Error;
 
 #[derive(Insertable)]
 #[table_name = "artist_aliases"]
-pub struct NewArtistAlias {
-    pub artist_id: i64,
-    pub alias: String,
+pub struct NewArtistAlias<'a> {
+    pub artist_id: &'a i64,
+    pub alias: &'a String,
 }
 
 #[derive(Serialize, Deserialize, Queryable)]
@@ -22,8 +22,8 @@ pub struct ArtistAlias {
 
 impl ArtistAlias {
     pub fn create(
-        artist_id: i64,
-        alias: String,
+        artist_id: &i64,
+        alias: &String,
         connection: &PgConnection,
     ) -> Result<ArtistAlias, Box<dyn Error>> {
         let alias = NewArtistAlias { artist_id, alias };

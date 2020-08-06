@@ -11,10 +11,10 @@ use std::collections::HashMap;
 #[post("/compare", data = "<data>")]
 pub fn route(content_type: &ContentType, data: Data, conn: crate::Connection) -> Template {
     //TODO error template
-    let id = insert_image_into_db(content_type, data, conn).unwrap();
+    let upload = insert_image_into_db(content_type, data, conn).unwrap();
     let mut context = HashMap::<String, String>::new();
     context.insert(String::from("title"), String::from("TEMPLATE TITLE"));
-    context.insert(String::from("uploaded_image_id"), id.to_string());
+    context.insert(String::from("uploaded_image_id"), upload.id.to_string());
     Template::render("compare", context)
 }
 
@@ -22,7 +22,7 @@ fn insert_image_into_db(
     content_type: &ContentType,
     data: Data,
     conn: crate::Connection,
-) -> Result<i64, String> {
+) -> Result<UploadCache, String> {
     let options = MultipartFormDataOptions::with_multipart_form_data_fields(vec![
         MultipartFormDataField::raw("image")
             .size_limit(32 * 1024 * 1024)

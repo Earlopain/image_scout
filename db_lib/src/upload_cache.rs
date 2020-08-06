@@ -17,12 +17,23 @@ pub struct NewUploadCache<'a> {
 
 #[derive(Queryable)]
 pub struct UploadCache {
+    pub id: i64,
+    pub perceptual_hash: Vec<u8>,
+    pub file_type: String,
+    pub added_at: DateTime<Utc>,
+}
+
+#[derive(Queryable)]
+pub struct UploadCacheBlobOnly {
     pub blob: Vec<u8>,
     pub file_type: String,
 }
 
 impl UploadCache {
-    pub fn create(image: Vec<u8>, connection: &PgConnection) -> Result<i64, diesel::result::Error> {
+    pub fn create(
+        image: Vec<u8>,
+        connection: &PgConnection,
+    ) -> Result<UploadCache, diesel::result::Error> {
         match ImageInfo::create_from_vec(image) {
             Ok(info) => {
                 let cache = NewUploadCache {
@@ -34,7 +45,12 @@ impl UploadCache {
 
                 let inserted = diesel::insert_into(upload_cache::table)
                     .values(&cache)
-                    .returning(columns::id)
+                    .returning((
+                        columns::id,
+                        columns::perceptual_hash,
+                        columns::file_type,
+                        columns::added_at,
+                    ))
                     .get_result(connection)?;
                 Ok(inserted)
             }
@@ -47,7 +63,7 @@ impl UploadCache {
     pub fn get_info(
         search_for: &i64,
         connection: &PgConnection,
-    ) -> Result<UploadCache, diesel::result::Error> {
+    ) -> Result<UploadCacheBlobOnly, diesel::result::Error> {
         upload_cache::table
             .select((columns::blob, columns::file_type))
             .filter(columns::id.eq(search_for))

@@ -51,6 +51,14 @@ table! {
     }
 }
 
+table! {
+    upload_cache (id) {
+        id -> Int8,
+        blob -> Bytea,
+        added_at -> Timestamptz,
+    }
+}
+
 joinable!(artist_aliases -> artists (artist_id));
 joinable!(artist_pages -> artists (artist_id));
 joinable!(artist_pages -> page_types (page_type));
@@ -63,4 +71,5 @@ allow_tables_to_appear_in_same_query!(
     artist_posts,
     artists,
     page_types,
+    upload_cache,
 );

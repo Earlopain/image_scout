@@ -58,6 +58,13 @@ CREATE INDEX idx_16603_artist_posts_fk_1 ON artist_posts USING btree (page_type)
 ALTER TABLE artist_posts ADD CONSTRAINT artist_posts_fk FOREIGN KEY (artist_id) REFERENCES artists(id) ON UPDATE RESTRICT ON DELETE CASCADE;
 ALTER TABLE artist_posts ADD CONSTRAINT artist_posts_fk_1 FOREIGN KEY (page_type) REFERENCES page_types(id) ON UPDATE RESTRICT ON DELETE CASCADE;
 
+CREATE TABLE upload_cache (
+    id bigserial NOT NULL,
+    "blob" bytea NOT NULL,
+    added_at timestamptz NOT NULL,
+    CONSTRAINT idx_16654_primary PRIMARY KEY (id)
+);
+
 INSERT INTO page_types ("name",regex) VALUES 
 ('Twitter','^https:\/\/twitter\.com\/[a-zA-Z0-9_]{1,15}\/$'),
 ('FurAffinity','^https:\/\/www\.furaffinity\.net\/user\/[a-zA-Z0-9-_~.]{1,30}\/$');

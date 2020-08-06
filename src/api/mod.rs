@@ -46,5 +46,9 @@ pub fn api_routes() -> std::vec::Vec<rocket::Route> {
 }
 
 pub fn proxy_route() -> std::vec::Vec<rocket::Route> {
-    routes![image_proxy::route, image_proxy::route_thumb]
+    routes![
+        image_proxy::route,
+        image_proxy::route_thumb,
+        image_proxy::route_uploaded
+    ]
 }

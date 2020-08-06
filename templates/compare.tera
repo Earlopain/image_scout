@@ -20,7 +20,7 @@
 <body>
     <div id="container">
         <div id="image-orig-container">
-            <img id="image-orig" src="static/orig.jpg">
+            <img id="image-orig" src="static/image/uploaded/{{ uploaded_image_id }}">
         </div>
         <div id="image-juxtaposition">
         </div>

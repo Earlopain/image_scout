@@ -1,5 +1,6 @@
 use db;
 use db::artist_post::ArtistPost;
+use db::upload_cache::UploadCache;
 use rocket::http::ContentType;
 use rocket::response::{Body, Response};
 use std::convert::TryInto;
@@ -26,6 +27,20 @@ pub fn route_thumb(id: i64, conn: crate::Connection) -> Option<Response<'static>
             post.thumb,
             post.file_name,
             post.file_type,
+        )),
+        Err(_e) => None,
+    }
+}
+
+//TODO remove from db once request is finished
+#[get("/image/uploaded/<id>")]
+pub fn route_uploaded(id: i64, conn: crate::Connection) -> Option<Response<'static>> {
+    let image = UploadCache::get_info(&id, &conn);
+    match image {
+        Ok(image) => Some(craft_response_success(
+            image.blob,
+            id.to_string(),
+            image.file_type,
         )),
         Err(_e) => None,
     }

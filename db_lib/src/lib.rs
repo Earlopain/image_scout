@@ -2,8 +2,9 @@ pub mod artist;
 pub mod artist_alias;
 pub mod artist_page;
 pub mod artist_post;
-mod image_info;
+pub mod image_info;
 mod schema;
+pub mod upload_cache;
 
 #[macro_use]
 extern crate diesel;

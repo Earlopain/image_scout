@@ -1,3 +1,4 @@
+use crate::artist_post::ArtistPost;
 use crate::image_info::ImageInfo;
 use crate::schema::upload_cache;
 use chrono::{DateTime, Utc};
@@ -69,4 +70,28 @@ impl UploadCache {
             .filter(columns::id.eq(search_for))
             .first(connection)
     }
+
+    pub fn get_similar_artist_posts(
+        self: &Self,
+        connection: &PgConnection,
+    ) -> Result<Vec<i64>, diesel::result::Error> {
+        let all_posts = ArtistPost::get_all_for_compare(connection)?;
+        let upload_hasher = get_image_hash_from_peceptual_hash(&self.perceptual_hash);
+
+        Ok(all_posts
+            .into_iter()
+            .filter(|post| {
+                let dist =
+                    upload_hasher.dist(&get_image_hash_from_peceptual_hash(&post.perceptual_hash));
+                println!("{}", dist);
+                dist < 100
+            })
+            .map(|post| post.id)
+            .collect())
+    }
+}
+
+fn get_image_hash_from_peceptual_hash(hash: &Vec<u8>) -> img_hash::ImageHash {
+    //TODO why convert   vec<u8> to base64 only to later convert back?
+    img_hash::ImageHash::from_base64(&base64::encode(hash)).unwrap()
 }

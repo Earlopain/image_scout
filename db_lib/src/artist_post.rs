@@ -58,6 +58,12 @@ pub struct ArtistPostOnlyThumb {
 }
 
 #[derive(Queryable)]
+pub struct ArtistPostPerceptualHashOnly {
+    pub id: i64,
+    pub perceptual_hash: Vec<u8>,
+}
+
+#[derive(Queryable)]
 pub struct ArtistPost {
     pub id: i64,
     pub artist_id: i64,
@@ -167,5 +173,13 @@ impl ArtistPost {
             .select((columns::thumb, columns::file_name, columns::file_type))
             .filter(columns::id.eq(search_for))
             .first(connection)
+    }
+
+    pub fn get_all_for_compare(
+        connection: &PgConnection,
+    ) -> Result<Vec<ArtistPostPerceptualHashOnly>, diesel::result::Error> {
+        artist_posts::table
+            .select((columns::id, columns::perceptual_hash))
+            .get_results(connection)
     }
 }

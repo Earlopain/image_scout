@@ -62,6 +62,7 @@ CREATE TABLE upload_cache (
     id bigserial NOT NULL,
     "blob" bytea NOT NULL,
     perceptual_hash bytea NOT NULL,
+    file_type varchar(3) NOT NULL,
     added_at timestamptz NOT NULL,
     CONSTRAINT idx_16654_primary PRIMARY KEY (id)
 );

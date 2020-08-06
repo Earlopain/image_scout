@@ -56,6 +56,7 @@ table! {
         id -> Int8,
         blob -> Bytea,
         perceptual_hash -> Bytea,
+        file_type -> Varchar,
         added_at -> Timestamptz,
     }
 }

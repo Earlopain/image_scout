@@ -1,12 +1,10 @@
+use crate::image_info::ImageInfo;
 use crate::schema::artist_posts;
 use artist_posts::columns;
 use chrono::{DateTime, Utc};
 use diesel;
 use diesel::pg::PgConnection;
 use diesel::prelude::*;
-use image;
-use image::GenericImageView;
-use img_hash::HasherConfig;
 use serde::{Deserialize, Serialize};
 use std::error::Error;
 
@@ -76,14 +74,6 @@ pub struct ArtistPost {
     pub created_at: DateTime<Utc>,
 }
 
-struct ImageInfo {
-    width: i64,
-    height: i64,
-    perceptual_hash: Vec<u8>,
-    file_type: String,
-    thumb: Vec<u8>,
-}
-
 impl ArtistPost {
     pub fn create(
         artist_id: &i64,
@@ -93,23 +83,19 @@ impl ArtistPost {
         created_at: &DateTime<Utc>,
         connection: &PgConnection,
     ) -> Result<ArtistPostNoBlob, Box<dyn Error>> {
-        let request = reqwest::blocking::get(direct_url);
-        let image_blob = request?.bytes()?.to_vec();
-
-        let image_info = get_image_info(&image_blob)?;
-
+        let info = ImageInfo::create(direct_url)?;
         let post = NewArtistPost {
             artist_id,
             page_type,
             source_url,
-            file_name: get_file_name_from_url(direct_url),
+            file_name: info.get_file_name(),
             direct_url: Some(direct_url),
-            blob: &image_blob,
-            thumb: &image_info.thumb,
-            width: &image_info.width,
-            height: &image_info.height,
-            perceptual_hash: &image_info.perceptual_hash,
-            file_type: &image_info.file_type,
+            blob: info.get_blob(),
+            thumb: &info.get_thumbnail(500, 500)?,
+            width: &i64::from(info.get_width()),
+            height: &i64::from(info.get_height()),
+            perceptual_hash: &info.get_perceptual_hash(),
+            file_type: info.get_format(),
             created_at,
         };
 
@@ -182,43 +168,4 @@ impl ArtistPost {
             .filter(columns::id.eq(search_for))
             .first(connection)
     }
-}
-
-fn get_image_info(img_data: &Vec<u8>) -> Result<ImageInfo, Box<dyn std::error::Error>> {
-    let image = image::load_from_memory(&*img_data).unwrap();
-    let dimensions = image.dimensions();
-    let image_type = image::guess_format(&*img_data)
-        .unwrap()
-        .extensions_str()
-        .first()
-        .unwrap();
-
-    let hasher = HasherConfig::with_bytes_type::<[u8; 32]>()
-        .hash_size(16, 16)
-        .to_hasher();
-    let hash = hasher.hash_image(&image);
-
-    Ok(ImageInfo {
-        width: i64::from(dimensions.0),
-        height: i64::from(dimensions.1),
-        file_type: image_type.to_string(),
-        perceptual_hash: hash.as_bytes().to_vec(),
-        thumb: resize_image(image, 500, 500)?,
-    })
-}
-
-fn resize_image(
-    image: image::DynamicImage,
-    width: u32,
-    height: u32,
-) -> Result<Vec<u8>, Box<dyn std::error::Error>> {
-    let mut result: Vec<u8> = Vec::new();
-    image
-        .thumbnail(width, height)
-        .write_to(&mut result, image::ImageOutputFormat::Jpeg(85))?;
-    Ok(result)
-}
-
-fn get_file_name_from_url(url: &str) -> &str {
-    &url.split("/").last().unwrap().split("?").next().unwrap()
 }

@@ -1,18 +1,26 @@
-#container > div {
-	display: inline-block;
+#image-container {
+    display: inline-block;
 }
 
-#image-orig-container {
-	width: 40%;
+#image-orig {
+    width: 350;
+    height: 350px;
 }
 
-#image-orig-container img {
-	width: 100%;
+#images-to-compare {
+    display: inline-block;
+    vertical-align: top;
 }
 
-#image-juxtaposition {
-	width: 40%;
-	display:inline-block;
+.image-compare {
+    max-width: 350px;
+    max-height: 350px;
+}
+
+#juxtaposition-container {
+    /* FIXME: This does not work. The image will extend past the viewport, even with max-heigth/width set */
+    min-width: 30%;
+    float: right;
 }
 
 #images-to-compare div {

@@ -18,21 +18,22 @@
 </head>
 
 <body>
-    <div id="container">
+    <div id="image-container">
         <div id="image-orig-container">
             <img id="image-orig" src="static/image/uploaded/{{ uploaded_image_id }}">
         </div>
-        <div id="image-juxtaposition">
-        </div>
-    </div>
-    <div id="images-to-compare">
+        <div id="images-to-compare">
         {% if similar_images %}
             {% for image_id in similar_images %}
-              <div><img class="image-compare" src="static/image/thumb/{{ image_id }}"></div>
+              <div><img class="image-compare" src="static/image/{{ image_id }}"></div>
             {% endfor %}
         {% else %}
             No similar images found
         {% endif %}
+        </div>
+    </div>
+    <div id="juxtaposition-container">
+        <div id="image-juxtaposition"></div>
     </div>
 </body>
 

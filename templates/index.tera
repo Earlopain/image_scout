@@ -9,7 +9,7 @@
 
 <body>
     <div>
-        <form method="post" action="/upload" enctype="multipart/form-data">
+        <form method="post" action="/compare" enctype="multipart/form-data">
             <input name="image" type="file" accept="image/*" />
             <button type="submit">Upload The Image File</button>
         </form>

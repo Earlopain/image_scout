@@ -1,19 +1,26 @@
-use crate::api::SingleResult;
 use db::upload_cache::UploadCache;
 use rocket::http::ContentType;
 use rocket::Data;
-use rocket_contrib::json::Json;
+use rocket_contrib::templates::Template;
 use rocket_multipart_form_data::mime;
 use rocket_multipart_form_data::{
     MultipartFormData, MultipartFormDataError, MultipartFormDataField, MultipartFormDataOptions,
 };
+use std::collections::HashMap;
 
-#[post("/upload", data = "<data>")]
-pub fn route(
+#[post("/compare", data = "<data>")]
+pub fn route(content_type: &ContentType, data: Data, conn: crate::Connection) -> Template {
+    insert_image_into_db(content_type, data, conn);
+    let mut context = HashMap::<String, String>::new();
+    context.insert(String::from("title"), String::from("TEMPLATE TITLE"));
+    Template::render("compare", context)
+}
+
+fn insert_image_into_db(
     content_type: &ContentType,
     data: Data,
     conn: crate::Connection,
-) -> Json<SingleResult<UploadCache>> {
+) -> Result<UploadCache, String> {
     let options = MultipartFormDataOptions::with_multipart_form_data_fields(vec![
         MultipartFormDataField::raw("image")
             .size_limit(32 * 1024 * 1024)
@@ -25,17 +32,20 @@ pub fn route(
         Ok(multipart_form_data) => multipart_form_data,
         Err(err) => match err {
             MultipartFormDataError::DataTooLargeError(_) => {
-                return SingleResult::error("The file is too large.".to_string());
+                return Err("The file is too large.".to_string());
             }
             MultipartFormDataError::DataTypeError(_) => {
-                return SingleResult::error("The file is not an image".to_string());
+                return Err("The file is not an image".to_string());
             }
             _ => panic!("{:?}", err),
         },
     };
 
     match multipart_form_data.raw.remove("image") {
-        Some(mut image) => SingleResult::make(UploadCache::create(image.remove(0).raw, &conn)),
-        None => SingleResult::error("Please input a file".to_string()),
+        Some(mut image) => match UploadCache::create(image.remove(0).raw, &conn) {
+            Ok(cache) => Ok(cache),
+            Err(e) => Err(e.to_string()),
+        },
+        None => Err("Please input a file".to_string()),
     }
 }

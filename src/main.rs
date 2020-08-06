@@ -9,18 +9,11 @@ extern crate rocket_multipart_form_data;
 use rocket_contrib::serve::StaticFiles;
 use rocket_contrib::templates::Template;
 use std::collections::HashMap;
-
 mod api;
+mod compare;
 
 #[database("main")]
 pub struct Connection(rocket_contrib::databases::diesel::PgConnection);
-
-#[get("/compare")]
-fn compare() -> Template {
-    let mut context = HashMap::<String, String>::new();
-    context.insert(String::from("title"), String::from("TEMPLATE TITLE"));
-    Template::render("compare", context)
-}
 
 #[get("/")]
 fn index() -> Template {
@@ -32,8 +25,7 @@ fn main() {
     rocket::ignite()
         .attach(Template::fairing())
         .attach(Connection::fairing())
-        .mount("/", routes![index, compare])
-        .mount("/", api::upload_routes())
+        .mount("/", routes![index, compare::route])
         .mount("/api", api::api_routes())
         .mount("/static", api::proxy_route())
         .mount("/static", StaticFiles::from("static"))

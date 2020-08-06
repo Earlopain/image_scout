@@ -4,7 +4,6 @@ use serde::{Deserialize, Serialize};
 mod artist;
 mod artist_post;
 mod image_proxy;
-mod upload;
 
 #[derive(Serialize, Deserialize)]
 pub struct SingleResult<T> {
@@ -48,8 +47,4 @@ pub fn api_routes() -> std::vec::Vec<rocket::Route> {
 
 pub fn proxy_route() -> std::vec::Vec<rocket::Route> {
     routes![image_proxy::route, image_proxy::route_thumb]
-}
-
-pub fn upload_routes() -> std::vec::Vec<rocket::Route> {
-    routes![upload::route]
 }

@@ -10,8 +10,19 @@ pub struct ImageInfo<'a> {
 }
 
 impl ImageInfo<'_> {
-    pub fn create<'a>(url: &'a str) -> Result<ImageInfo<'a>, Box<dyn std::error::Error>> {
+    pub fn create_from_url<'a>(url: &'a str) -> Result<ImageInfo<'a>, Box<dyn std::error::Error>> {
         let blob = reqwest::blocking::get(url)?.bytes()?.to_vec();
+        ImageInfo::create(blob, url)
+    }
+
+    pub fn create_from_vec<'a>(blob: Vec<u8>) -> Result<ImageInfo<'a>, Box<dyn std::error::Error>> {
+        ImageInfo::create(blob, &"")
+    }
+
+    fn create<'a>(
+        blob: Vec<u8>,
+        url: &'a str,
+    ) -> Result<ImageInfo<'a>, Box<dyn std::error::Error>> {
         let image_data = image::load_from_memory(&blob)?;
         let format = image::guess_format(&*blob)?
             .extensions_str()

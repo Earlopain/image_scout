@@ -83,7 +83,7 @@ impl ArtistPost {
         created_at: &DateTime<Utc>,
         connection: &PgConnection,
     ) -> Result<ArtistPostNoBlob, Box<dyn Error>> {
-        let info = ImageInfo::create(direct_url)?;
+        let info = ImageInfo::create_from_url(direct_url)?;
         let post = NewArtistPost {
             artist_id,
             page_type,

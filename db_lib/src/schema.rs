@@ -55,6 +55,7 @@ table! {
     upload_cache (id) {
         id -> Int8,
         blob -> Bytea,
+        perceptual_hash -> Bytea,
         added_at -> Timestamptz,
     }
 }

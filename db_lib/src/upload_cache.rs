@@ -1,3 +1,4 @@
+use crate::image_info::ImageInfo;
 use crate::schema::upload_cache;
 use chrono::{DateTime, Utc};
 use diesel;
@@ -11,6 +12,7 @@ use upload_cache::columns;
 #[table_name = "upload_cache"]
 pub struct NewUploadCache<'a> {
     pub blob: &'a Vec<u8>,
+    pub perceptual_hash: &'a Vec<u8>,
     pub added_at: &'a DateTime<Utc>,
 }
 
@@ -23,19 +25,27 @@ pub struct UploadCache {
 
 impl UploadCache {
     pub fn create(
-        image: &Vec<u8>,
+        image: Vec<u8>,
         connection: &PgConnection,
     ) -> Result<UploadCache, diesel::result::Error> {
-        let cache = NewUploadCache {
-            blob: image,
-            added_at: &Utc::now(),
-        };
+        match ImageInfo::create_from_vec(image) {
+            Ok(info) => {
+                let cache = NewUploadCache {
+                    blob: info.get_blob(),
+                    perceptual_hash: &info.get_perceptual_hash(),
+                    added_at: &Utc::now(),
+                };
 
-        let inserted = diesel::insert_into(upload_cache::table)
-            .values(&cache)
-            .returning((columns::id, columns::added_at))
-            .get_result(connection)?;
-        Ok(inserted)
+                let inserted = diesel::insert_into(upload_cache::table)
+                    .values(&cache)
+                    .returning((columns::id, columns::added_at))
+                    .get_result(connection)?;
+                Ok(inserted)
+            }
+            Err(e) => {
+                panic!("Passed invalid image to insert into db\n".to_string() + &e.to_string())
+            }
+        }
     }
 
     pub fn get_blob(

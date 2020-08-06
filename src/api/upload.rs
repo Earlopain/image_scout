@@ -35,7 +35,7 @@ pub fn route(
     };
 
     match multipart_form_data.raw.remove("image") {
-        Some(mut image) => SingleResult::make(UploadCache::create(&image.remove(0).raw, &conn)),
+        Some(mut image) => SingleResult::make(UploadCache::create(image.remove(0).raw, &conn)),
         None => SingleResult::error("Please input a file".to_string()),
     }
 }

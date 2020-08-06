@@ -61,6 +61,7 @@ ALTER TABLE artist_posts ADD CONSTRAINT artist_posts_fk_1 FOREIGN KEY (page_type
 CREATE TABLE upload_cache (
     id bigserial NOT NULL,
     "blob" bytea NOT NULL,
+    perceptual_hash bytea NOT NULL,
     added_at timestamptz NOT NULL,
     CONSTRAINT idx_16654_primary PRIMARY KEY (id)
 );

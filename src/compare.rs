@@ -3,10 +3,14 @@ use rocket::http::ContentType;
 use rocket::Data;
 use rocket_contrib::templates::tera::Context;
 use rocket_contrib::templates::Template;
-use rocket_multipart_form_data::mime;
 use rocket_multipart_form_data::{
     MultipartFormData, MultipartFormDataError, MultipartFormDataField, MultipartFormDataOptions,
 };
+
+enum MultipartContent {
+    Blob(Vec<u8>),
+    Url(String),
+}
 
 #[post("/compare", data = "<data>")]
 pub fn route(content_type: &ContentType, data: Data, conn: crate::Connection) -> Template {
@@ -22,36 +26,53 @@ pub fn route(content_type: &ContentType, data: Data, conn: crate::Connection) ->
     Template::render("compare", context)
 }
 
+//TODO return error type instead of string
 fn insert_image_into_db(
     content_type: &ContentType,
     data: Data,
     conn: &crate::Connection,
 ) -> Result<UploadCache, String> {
     let options = MultipartFormDataOptions::with_multipart_form_data_fields(vec![
-        MultipartFormDataField::raw("image")
-            .size_limit(32 * 1024 * 1024)
-            .content_type_by_string(Some(mime::IMAGE_STAR))
-            .unwrap(),
+        MultipartFormDataField::raw("image").size_limit(32 * 1024 * 1024),
+        MultipartFormDataField::text("url"),
     ]);
 
-    let mut multipart_form_data = match MultipartFormData::parse(content_type, data, options) {
-        Ok(multipart_form_data) => multipart_form_data,
-        Err(err) => match err {
-            MultipartFormDataError::DataTooLargeError(_) => {
-                return Err("The file is too large.".to_string());
-            }
-            MultipartFormDataError::DataTypeError(_) => {
-                return Err("The file is not an image".to_string());
-            }
-            _ => panic!("{:?}", err),
+    let form_data =
+        get_image_type_from_multiform(MultipartFormData::parse(content_type, data, options));
+
+    let upload_cache = match form_data {
+        Some(data_type) => match data_type {
+            MultipartContent::Blob(data) => UploadCache::create_from_vec(data, &conn),
+            MultipartContent::Url(url) => UploadCache::create_from_url(&url, &conn),
         },
+        None => return Err("You must provide either a image or a url".to_string()),
     };
 
-    match multipart_form_data.raw.remove("image") {
-        Some(mut image) => match UploadCache::create(image.remove(0).raw, &conn) {
-            Ok(cache) => Ok(cache),
-            Err(e) => Err(e.to_string()),
-        },
-        None => Err("Please input a file".to_string()),
+    match upload_cache {
+        Ok(cache) => Ok(cache),
+        Err(e) => Err(e.to_string()),
     }
+}
+
+fn get_image_type_from_multiform(
+    data: Result<MultipartFormData, MultipartFormDataError>,
+) -> Option<MultipartContent> {
+    let mut multipart_form_data = match data {
+        Ok(multipart_form_data) => multipart_form_data,
+        Err(_err) => return None,
+    };
+
+    if let Some(mut url) = multipart_form_data.texts.remove("url") {
+        let text = url.remove(0).text;
+        if text.len() > 0 {
+            return Some(MultipartContent::Url(text));
+        }
+    }
+    if let Some(mut image) = multipart_form_data.raw.remove("image") {
+        let blob = image.remove(0).raw;
+        if blob.len() > 0 {
+            return Some(MultipartContent::Blob(blob));
+        }
+    }
+    None
 }

@@ -31,11 +31,27 @@ pub struct UploadCacheBlobOnly {
 }
 
 impl UploadCache {
-    pub fn create(
+    pub fn create_from_vec(
         image: Vec<u8>,
         connection: &PgConnection,
     ) -> Result<UploadCache, diesel::result::Error> {
-        match ImageInfo::create_from_vec(image) {
+        println!("From blob");
+        UploadCache::create(ImageInfo::create_from_vec(image), connection)
+    }
+
+    pub fn create_from_url(
+        url: &str,
+        connection: &PgConnection,
+    ) -> Result<UploadCache, diesel::result::Error> {
+        println!("From url");
+        UploadCache::create(ImageInfo::create_from_url(url), connection)
+    }
+
+    pub fn create(
+        image_info: Result<ImageInfo, Box<dyn std::error::Error>>,
+        connection: &PgConnection,
+    ) -> Result<UploadCache, diesel::result::Error> {
+        match image_info {
             Ok(info) => {
                 let cache = NewUploadCache {
                     blob: info.get_blob(),
@@ -83,7 +99,6 @@ impl UploadCache {
             .filter(|post| {
                 let dist =
                     upload_hasher.dist(&get_image_hash_from_peceptual_hash(&post.perceptual_hash));
-                println!("{}", dist);
                 dist < 100
             })
             .map(|post| post.id)

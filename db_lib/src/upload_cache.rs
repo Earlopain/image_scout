@@ -95,21 +95,17 @@ impl UploadCache {
         conn: &PgConnection,
     ) -> Result<Vec<i64>, diesel::result::Error> {
         let all_posts = ArtistPost::get_all_for_compare(conn)?;
-        let upload_hasher = get_image_hash_from_peceptual_hash(&self.perceptual_hash);
 
         Ok(all_posts
             .into_iter()
-            .filter(|post| {
-                let dist =
-                    upload_hasher.dist(&get_image_hash_from_peceptual_hash(&post.perceptual_hash));
-                dist < 100
-            })
+            .filter(|post| hamming_distance(&self.perceptual_hash, &post.perceptual_hash) < 10)
             .map(|post| post.id)
             .collect())
     }
 }
 
-fn get_image_hash_from_peceptual_hash(hash: &Vec<u8>) -> img_hash::ImageHash {
-    //TODO why convert   vec<u8> to base64 only to later convert back?
-    img_hash::ImageHash::from_base64(&base64::encode(hash)).unwrap()
+fn hamming_distance(a: &Vec<u8>, b: &Vec<u8>) -> u32 {
+    a.iter()
+        .zip(b.iter())
+        .fold(0, |acc, (&x1, &x2)| acc + (x1 ^ x2).count_ones())
 }

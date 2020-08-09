@@ -68,5 +68,5 @@ CREATE TABLE upload_cache (
 );
 
 INSERT INTO page_types ("name",regex) VALUES 
-('Twitter','^https:\/\/twitter\.com\/[a-zA-Z0-9_]{1,15}\/$'),
-('FurAffinity','^https:\/\/www\.furaffinity\.net\/user\/[a-zA-Z0-9-_~.]{1,30}\/$');
+('Twitter','^https://twitter\.com/[a-zA-Z0-9_]{1,15}/$'),
+('FurAffinity','^https://www\.furaffinity\.net/user/[a-zA-Z0-9-_~.]{1,30}/$');

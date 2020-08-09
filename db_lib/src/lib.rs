@@ -3,6 +3,7 @@ pub mod artist_alias;
 pub mod artist_page;
 pub mod artist_post;
 pub mod image_info;
+pub mod page_type;
 mod schema;
 pub mod upload_cache;
 
@@ -10,3 +11,5 @@ pub mod upload_cache;
 extern crate diesel;
 extern crate image;
 extern crate img_hash;
+#[macro_use]
+extern crate lazy_static;

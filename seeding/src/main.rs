@@ -9,6 +9,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let kenket = db::artist::Artist::create("kenket", &conn)?;
     kenket.add_alias("tessgarman", &conn)?;
     kenket.add_alias("ketsketch", &conn)?;
+    kenket.add_page(
+        &"https://www.furaffinity.net/user/kenket/".to_string(),
+        &conn,
+    )?;
+    kenket.add_page(&"https://twitter.com/tessgarman/".to_string(), &conn)?;
     kenket.add_post(
         &1,
         "",

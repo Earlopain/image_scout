@@ -1,6 +1,7 @@
 use crate::artist_alias::ArtistAlias;
 use crate::artist_page::ArtistPage;
 use crate::artist_post::{ArtistPost, ArtistPostNoBlob};
+use crate::page_type::PageType;
 use crate::schema::artists;
 use crate::schema::artists::dsl::*;
 use diesel;
@@ -43,12 +44,13 @@ impl Artist {
 
     pub fn add_page(
         self: &Self,
-        url: &str,
+        url: &String,
         conn: &PgConnection,
     ) -> Result<ArtistPage, Box<dyn Error>> {
-        //TODO get page_type from url
-        let page_type = &1;
-        ArtistPage::create(&self.id, page_type, url, conn)
+        match PageType::get_type_from_url(url, conn)? {
+            Some(page_type) => ArtistPage::create(&self.id, &page_type, url, conn),
+            None => panic!("Does not match!"),
+        }
     }
 
     pub fn add_post(

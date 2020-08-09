@@ -32,16 +32,17 @@ pub fn route_thumb(id: i64, conn: crate::Connection) -> Option<Response<'static>
     }
 }
 
-//TODO remove from db once request is finished
 #[get("/image/uploaded/<id>")]
 pub fn route_uploaded(id: i64, conn: crate::Connection) -> Option<Response<'static>> {
     let image = UploadCache::get_info(&id, &conn);
     match image {
-        Ok(image) => Some(craft_response_success(
-            image.blob,
-            id.to_string(),
-            image.file_type,
-        )),
+        Ok(image) => {
+            let result = craft_response_success(image.blob, id.to_string(), image.file_type);
+            match UploadCache::delete(&id, &conn) {
+                Ok(_) => Some(result),
+                Err(_) => None,
+            }
+        }
         Err(_e) => None,
     }
 }

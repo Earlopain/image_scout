@@ -26,6 +26,7 @@ pub struct UploadCache {
 
 #[derive(Queryable)]
 pub struct UploadCacheBlobOnly {
+    pub id: i64,
     pub blob: Vec<u8>,
     pub file_type: String,
 }
@@ -35,7 +36,6 @@ impl UploadCache {
         image: Vec<u8>,
         connection: &PgConnection,
     ) -> Result<UploadCache, diesel::result::Error> {
-        println!("From blob");
         UploadCache::create(ImageInfo::create_from_vec(image), connection)
     }
 
@@ -43,11 +43,10 @@ impl UploadCache {
         url: &str,
         connection: &PgConnection,
     ) -> Result<UploadCache, diesel::result::Error> {
-        println!("From url");
         UploadCache::create(ImageInfo::create_from_url(url), connection)
     }
 
-    pub fn create(
+    fn create(
         image_info: Result<ImageInfo, Box<dyn std::error::Error>>,
         connection: &PgConnection,
     ) -> Result<UploadCache, diesel::result::Error> {
@@ -77,12 +76,16 @@ impl UploadCache {
         }
     }
 
+    pub fn delete(id: &i64, connection: &PgConnection) -> Result<usize, diesel::result::Error> {
+        diesel::delete(upload_cache::table.filter(columns::id.eq(id))).execute(connection)
+    }
+
     pub fn get_info(
         search_for: &i64,
         connection: &PgConnection,
     ) -> Result<UploadCacheBlobOnly, diesel::result::Error> {
         upload_cache::table
-            .select((columns::blob, columns::file_type))
+            .select((columns::id, columns::blob, columns::file_type))
             .filter(columns::id.eq(search_for))
             .first(connection)
     }

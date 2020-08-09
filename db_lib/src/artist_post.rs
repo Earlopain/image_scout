@@ -1,3 +1,4 @@
+use crate::error::{DbError, InsertImageFromUrlError};
 use crate::image_info::ImageInfo;
 use crate::schema::artist_posts;
 use artist_posts::columns;
@@ -6,7 +7,6 @@ use diesel;
 use diesel::pg::PgConnection;
 use diesel::prelude::*;
 use serde::{Deserialize, Serialize};
-use std::error::Error;
 
 #[derive(Insertable)]
 #[table_name = "artist_posts"]
@@ -88,7 +88,7 @@ impl ArtistPost {
         direct_url: &str,
         created_at: &DateTime<Utc>,
         conn: &PgConnection,
-    ) -> Result<ArtistPostNoBlob, Box<dyn Error>> {
+    ) -> Result<ArtistPostNoBlob, InsertImageFromUrlError> {
         let info = ImageInfo::create_from_url(direct_url)?;
         let post = NewArtistPost {
             artist_id,
@@ -124,10 +124,7 @@ impl ArtistPost {
         Ok(inserted)
     }
 
-    pub fn get_by_id(
-        search_for: &i64,
-        conn: &PgConnection,
-    ) -> Result<ArtistPost, diesel::result::Error> {
+    pub fn get_by_id(search_for: &i64, conn: &PgConnection) -> Result<ArtistPost, DbError> {
         artist_posts::table
             .filter(columns::id.eq(search_for))
             .first(conn)
@@ -136,7 +133,7 @@ impl ArtistPost {
     pub fn get_by_id_no_blob(
         search_for: &i64,
         conn: &PgConnection,
-    ) -> Result<ArtistPostNoBlob, diesel::result::Error> {
+    ) -> Result<ArtistPostNoBlob, DbError> {
         artist_posts::table
             .select((
                 columns::id,
@@ -158,7 +155,7 @@ impl ArtistPost {
     pub fn get_by_id_only_blob(
         search_for: &i64,
         conn: &PgConnection,
-    ) -> Result<ArtistPostOnlyBlob, diesel::result::Error> {
+    ) -> Result<ArtistPostOnlyBlob, DbError> {
         artist_posts::table
             .select((columns::blob, columns::file_name, columns::file_type))
             .filter(columns::id.eq(search_for))
@@ -168,7 +165,7 @@ impl ArtistPost {
     pub fn get_by_id_only_thumb(
         search_for: &i64,
         conn: &PgConnection,
-    ) -> Result<ArtistPostOnlyThumb, diesel::result::Error> {
+    ) -> Result<ArtistPostOnlyThumb, DbError> {
         artist_posts::table
             .select((columns::thumb, columns::file_name, columns::file_type))
             .filter(columns::id.eq(search_for))
@@ -177,7 +174,7 @@ impl ArtistPost {
 
     pub fn get_all_for_compare(
         conn: &PgConnection,
-    ) -> Result<Vec<ArtistPostPerceptualHashOnly>, diesel::result::Error> {
+    ) -> Result<Vec<ArtistPostPerceptualHashOnly>, DbError> {
         artist_posts::table
             .select((columns::id, columns::perceptual_hash))
             .get_results(conn)

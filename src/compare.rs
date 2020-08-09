@@ -1,3 +1,4 @@
+use db::error::InsertImageFromUrlError;
 use db::upload_cache::UploadCache;
 use rocket::http::ContentType;
 use rocket::Data;
@@ -26,12 +27,11 @@ pub fn route(content_type: &ContentType, data: Data, conn: crate::Connection) ->
     Template::render("compare", context)
 }
 
-//TODO return error type instead of string
 fn insert_image_into_db(
     content_type: &ContentType,
     data: Data,
     conn: &crate::Connection,
-) -> Result<UploadCache, String> {
+) -> Result<UploadCache, InsertImageFromUrlError> {
     let options = MultipartFormDataOptions::with_multipart_form_data_fields(vec![
         MultipartFormDataField::raw("image").size_limit(32 * 1024 * 1024),
         MultipartFormDataField::text("url"),
@@ -42,16 +42,12 @@ fn insert_image_into_db(
 
     let upload_cache = match form_data {
         Some(data_type) => match data_type {
-            MultipartContent::Blob(data) => UploadCache::create_from_vec(data, &conn),
-            MultipartContent::Url(url) => UploadCache::create_from_url(&url, &conn),
+            MultipartContent::Blob(data) => UploadCache::create_from_vec(data, &conn)?,
+            MultipartContent::Url(url) => UploadCache::create_from_url(&url, &conn)?,
         },
-        None => return Err("You must provide either a image or a url".to_string()),
+        None => panic!("You must provide either a image or a url"),
     };
-
-    match upload_cache {
-        Ok(cache) => Ok(cache),
-        Err(e) => Err(e.to_string()),
-    }
+    Ok(upload_cache)
 }
 
 fn get_image_type_from_multiform(

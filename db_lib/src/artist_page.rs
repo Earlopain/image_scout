@@ -1,3 +1,4 @@
+use crate::error::DbError;
 use crate::schema::artist_pages;
 use crate::schema::artist_pages::dsl;
 use chrono::{DateTime, Utc};
@@ -6,7 +7,6 @@ use diesel::pg::PgConnection;
 use diesel::prelude::*;
 #[cfg(feature = "json")]
 use serde::{Deserialize, Serialize};
-use std::error::Error;
 
 #[derive(Insertable)]
 #[table_name = "artist_pages"]
@@ -37,7 +37,7 @@ impl ArtistPage {
         page_type: &i64,
         url: &str,
         conn: &PgConnection,
-    ) -> Result<ArtistPage, Box<dyn Error>> {
+    ) -> Result<ArtistPage, DbError> {
         let page = NewArtistPage {
             artist_id,
             page_type,
@@ -56,7 +56,7 @@ impl ArtistPage {
     pub fn get_by_artist_id(
         search_for: &i64,
         conn: &PgConnection,
-    ) -> Result<std::vec::Vec<ArtistPage>, diesel::result::Error> {
+    ) -> Result<std::vec::Vec<ArtistPage>, DbError> {
         artist_pages::table
             .filter(dsl::artist_id.eq(search_for))
             .load(conn)

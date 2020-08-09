@@ -2,6 +2,7 @@ pub mod artist;
 pub mod artist_alias;
 pub mod artist_page;
 pub mod artist_post;
+pub mod error;
 pub mod image_info;
 pub mod page_type;
 mod schema;

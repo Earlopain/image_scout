@@ -1,4 +1,5 @@
 use crate::artist_post::ArtistPost;
+use crate::error::{DbError, DbOrImageError, InsertImageFromUrlError};
 use crate::image_info::ImageInfo;
 use crate::schema::upload_cache;
 use chrono::{DateTime, Utc};
@@ -35,65 +36,52 @@ impl UploadCache {
     pub fn create_from_vec(
         image: Vec<u8>,
         conn: &PgConnection,
-    ) -> Result<UploadCache, diesel::result::Error> {
-        UploadCache::create(ImageInfo::create_from_vec(image), conn)
+    ) -> Result<UploadCache, DbOrImageError> {
+        Ok(UploadCache::create(
+            ImageInfo::create_from_vec(image)?,
+            conn,
+        )?)
     }
 
     pub fn create_from_url(
         url: &str,
         conn: &PgConnection,
-    ) -> Result<UploadCache, diesel::result::Error> {
-        UploadCache::create(ImageInfo::create_from_url(url), conn)
+    ) -> Result<UploadCache, InsertImageFromUrlError> {
+        Ok(UploadCache::create(ImageInfo::create_from_url(url)?, conn)?)
     }
 
-    fn create(
-        image_info: Result<ImageInfo, Box<dyn std::error::Error>>,
-        conn: &PgConnection,
-    ) -> Result<UploadCache, diesel::result::Error> {
-        match image_info {
-            Ok(info) => {
-                let cache = NewUploadCache {
-                    blob: info.get_blob(),
-                    perceptual_hash: &info.get_perceptual_hash(),
-                    file_type: &info.get_format(),
-                    added_at: &Utc::now(),
-                };
+    fn create(info: ImageInfo, conn: &PgConnection) -> Result<UploadCache, DbError> {
+        let cache = NewUploadCache {
+            blob: info.get_blob(),
+            perceptual_hash: &info.get_perceptual_hash(),
+            file_type: &info.get_format(),
+            added_at: &Utc::now(),
+        };
 
-                let inserted = diesel::insert_into(upload_cache::table)
-                    .values(&cache)
-                    .returning((
-                        columns::id,
-                        columns::perceptual_hash,
-                        columns::file_type,
-                        columns::added_at,
-                    ))
-                    .get_result(conn)?;
-                Ok(inserted)
-            }
-            Err(e) => {
-                panic!("Passed invalid image to insert into db\n".to_string() + &e.to_string())
-            }
-        }
+        let inserted = diesel::insert_into(upload_cache::table)
+            .values(&cache)
+            .returning((
+                columns::id,
+                columns::perceptual_hash,
+                columns::file_type,
+                columns::added_at,
+            ))
+            .get_result(conn)?;
+        Ok(inserted)
     }
 
-    pub fn delete(id: &i64, conn: &PgConnection) -> Result<usize, diesel::result::Error> {
+    pub fn delete(id: &i64, conn: &PgConnection) -> Result<usize, DbError> {
         diesel::delete(upload_cache::table.filter(columns::id.eq(id))).execute(conn)
     }
 
-    pub fn get_info(
-        search_for: &i64,
-        conn: &PgConnection,
-    ) -> Result<UploadCacheBlobOnly, diesel::result::Error> {
+    pub fn get_info(search_for: &i64, conn: &PgConnection) -> Result<UploadCacheBlobOnly, DbError> {
         upload_cache::table
             .select((columns::id, columns::blob, columns::file_type))
             .filter(columns::id.eq(search_for))
             .first(conn)
     }
 
-    pub fn get_similar_artist_posts(
-        self: &Self,
-        conn: &PgConnection,
-    ) -> Result<Vec<i64>, diesel::result::Error> {
+    pub fn get_similar_artist_posts(self: &Self, conn: &PgConnection) -> Result<Vec<i64>, DbError> {
         let all_posts = ArtistPost::get_all_for_compare(conn)?;
 
         Ok(all_posts

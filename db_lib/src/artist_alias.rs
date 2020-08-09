@@ -1,3 +1,4 @@
+use crate::error::DbError;
 use crate::schema::artist_aliases;
 use crate::schema::artist_aliases::dsl;
 use diesel;
@@ -5,7 +6,6 @@ use diesel::pg::PgConnection;
 use diesel::prelude::*;
 #[cfg(feature = "json")]
 use serde::{Deserialize, Serialize};
-use std::error::Error;
 
 #[derive(Insertable)]
 #[table_name = "artist_aliases"]
@@ -27,7 +27,7 @@ impl ArtistAlias {
         artist_id: &i64,
         alias: &str,
         conn: &PgConnection,
-    ) -> Result<ArtistAlias, Box<dyn Error>> {
+    ) -> Result<ArtistAlias, DbError> {
         let alias = NewArtistAlias { artist_id, alias };
 
         let inserted = diesel::insert_into(artist_aliases::table)
@@ -39,7 +39,7 @@ impl ArtistAlias {
     pub fn get_by_name(
         search_for: &str,
         conn: &PgConnection,
-    ) -> Result<std::vec::Vec<ArtistAlias>, diesel::result::Error> {
+    ) -> Result<std::vec::Vec<ArtistAlias>, DbError> {
         artist_aliases::table
             .filter(dsl::alias.eq(search_for))
             .load(conn)

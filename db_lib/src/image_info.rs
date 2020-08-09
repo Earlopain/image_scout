@@ -1,5 +1,6 @@
+use crate::error::ImageFromUrlError;
 use image;
-use image::{DynamicImage, GenericImageView};
+use image::{DynamicImage, GenericImageView, ImageError};
 use img_hash::HasherConfig;
 
 pub struct ImageInfo<'a> {
@@ -10,19 +11,16 @@ pub struct ImageInfo<'a> {
 }
 
 impl ImageInfo<'_> {
-    pub fn create_from_url<'a>(url: &'a str) -> Result<ImageInfo<'a>, Box<dyn std::error::Error>> {
+    pub fn create_from_url(url: &str) -> Result<ImageInfo, ImageFromUrlError> {
         let blob = reqwest::blocking::get(url)?.bytes()?.to_vec();
-        ImageInfo::create(blob, url)
+        Ok(ImageInfo::create(blob, url)?)
     }
 
-    pub fn create_from_vec<'a>(blob: Vec<u8>) -> Result<ImageInfo<'a>, Box<dyn std::error::Error>> {
+    pub fn create_from_vec<'a>(blob: Vec<u8>) -> Result<ImageInfo<'a>, ImageError> {
         ImageInfo::create(blob, &"")
     }
 
-    fn create<'a>(
-        blob: Vec<u8>,
-        url: &'a str,
-    ) -> Result<ImageInfo<'a>, Box<dyn std::error::Error>> {
+    fn create(blob: Vec<u8>, url: &str) -> Result<ImageInfo, ImageError> {
         let image_data = image::load_from_memory(&blob)?;
         let format = image::guess_format(&*blob)?
             .extensions_str()
@@ -70,11 +68,7 @@ impl ImageInfo<'_> {
         hasher.hash_image(&self.image_data).as_bytes().to_vec()
     }
 
-    pub fn get_thumbnail(
-        self: &Self,
-        width: u32,
-        height: u32,
-    ) -> Result<Vec<u8>, Box<dyn std::error::Error>> {
+    pub fn get_thumbnail(self: &Self, width: u32, height: u32) -> Result<Vec<u8>, ImageError> {
         let mut result: Vec<u8> = Vec::new();
         self.image_data
             .thumbnail(width, height)

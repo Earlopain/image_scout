@@ -1,3 +1,4 @@
+use crate::error::DbError;
 use crate::schema::page_types;
 use diesel;
 use diesel::pg::PgConnection;
@@ -20,16 +21,11 @@ pub struct PageType {
 }
 
 impl PageType {
-    pub fn get_supported_pages(
-        conn: &PgConnection,
-    ) -> Result<Vec<PageType>, diesel::result::Error> {
+    pub fn get_supported_pages(conn: &PgConnection) -> Result<Vec<PageType>, DbError> {
         page_types::table.load(conn)
     }
 
-    pub fn get_type_from_url(
-        url: &String,
-        conn: &PgConnection,
-    ) -> Result<Option<i64>, diesel::result::Error> {
+    pub fn get_type_from_url(url: &String, conn: &PgConnection) -> Result<Option<i64>, DbError> {
         let mut map = HASHMAP.lock().unwrap();
         for page_type in Self::get_supported_pages(conn)? {
             let matcher = match map.contains_key(&page_type.id) {

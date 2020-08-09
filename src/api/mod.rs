@@ -1,3 +1,4 @@
+use db::error::DbError;
 use rocket;
 use rocket_contrib::json::Json;
 use serde::{Deserialize, Serialize};
@@ -31,13 +32,11 @@ impl<T> SingleResult<T> {
         })
     }
 
-    fn make(
-        result: Result<T, rocket_contrib::databases::diesel::result::Error>,
-    ) -> Json<SingleResult<T>> {
-        return match result {
+    fn make(result: Result<T, DbError>) -> Json<SingleResult<T>> {
+        match result {
             Ok(json) => SingleResult::success(json),
             Err(e) => SingleResult::error(e.to_string()),
-        };
+        }
     }
 }
 

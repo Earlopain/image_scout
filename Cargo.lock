@@ -376,6 +376,8 @@ dependencies = [
  "diesel",
  "image",
  "img_hash",
+ "lazy_static",
+ "regex",
  "reqwest",
  "serde",
 ]

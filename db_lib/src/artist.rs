@@ -24,31 +24,31 @@ pub struct Artist {
 }
 
 impl Artist {
-    pub fn create(artist_name: &str, connection: &PgConnection) -> Result<Artist, Box<dyn Error>> {
+    pub fn create(artist_name: &str, conn: &PgConnection) -> Result<Artist, Box<dyn Error>> {
         let artist = NewArtist { name: artist_name };
 
         let inserted = diesel::insert_into(artists::table)
             .values(&artist)
-            .get_result(connection)?;
+            .get_result(conn)?;
         Ok(inserted)
     }
 
     pub fn add_alias(
         self: &Self,
         alias: &str,
-        connection: &PgConnection,
+        conn: &PgConnection,
     ) -> Result<ArtistAlias, Box<dyn Error>> {
-        ArtistAlias::create(&self.id, alias, connection)
+        ArtistAlias::create(&self.id, alias, conn)
     }
 
     pub fn add_page(
         self: &Self,
         url: &str,
-        connection: &PgConnection,
+        conn: &PgConnection,
     ) -> Result<ArtistPage, Box<dyn Error>> {
         //TODO get page_type from url
         let page_type = &1;
-        ArtistPage::create(&self.id, page_type, url, connection)
+        ArtistPage::create(&self.id, page_type, url, conn)
     }
 
     pub fn add_post(
@@ -57,17 +57,17 @@ impl Artist {
         source_url: &str,
         direct_url: &str,
         created_at: &chrono::DateTime<chrono::Utc>,
-        connection: &PgConnection,
+        conn: &PgConnection,
     ) -> Result<ArtistPostNoBlob, Box<dyn Error>> {
         ArtistPost::create(
-            &self.id, page_type, source_url, direct_url, created_at, connection,
+            &self.id, page_type, source_url, direct_url, created_at, conn,
         )
     }
 
     pub fn get_by_name(
         search_for: &str,
-        connection: &PgConnection,
+        conn: &PgConnection,
     ) -> Result<Artist, diesel::result::Error> {
-        artists::table.filter(name.eq(search_for)).first(connection)
+        artists::table.filter(name.eq(search_for)).first(conn)
     }
 }

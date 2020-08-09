@@ -36,7 +36,7 @@ impl ArtistPage {
         artist_id: &i64,
         page_type: &i64,
         url: &str,
-        connection: &PgConnection,
+        conn: &PgConnection,
     ) -> Result<ArtistPage, Box<dyn Error>> {
         let page = NewArtistPage {
             artist_id,
@@ -49,16 +49,16 @@ impl ArtistPage {
 
         let inserted = diesel::insert_into(artist_pages::table)
             .values(&page)
-            .get_result(connection)?;
+            .get_result(conn)?;
         Ok(inserted)
     }
 
     pub fn get_by_artist_id(
         search_for: &i64,
-        connection: &PgConnection,
+        conn: &PgConnection,
     ) -> Result<std::vec::Vec<ArtistPage>, diesel::result::Error> {
         artist_pages::table
             .filter(dsl::artist_id.eq(search_for))
-            .load(connection)
+            .load(conn)
     }
 }

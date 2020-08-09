@@ -87,7 +87,7 @@ impl ArtistPost {
         source_url: &str,
         direct_url: &str,
         created_at: &DateTime<Utc>,
-        connection: &PgConnection,
+        conn: &PgConnection,
     ) -> Result<ArtistPostNoBlob, Box<dyn Error>> {
         let info = ImageInfo::create_from_url(direct_url)?;
         let post = NewArtistPost {
@@ -120,22 +120,22 @@ impl ArtistPost {
                 columns::file_type,
                 columns::created_at,
             ))
-            .get_result(connection)?;
+            .get_result(conn)?;
         Ok(inserted)
     }
 
     pub fn get_by_id(
         search_for: &i64,
-        connection: &PgConnection,
+        conn: &PgConnection,
     ) -> Result<ArtistPost, diesel::result::Error> {
         artist_posts::table
             .filter(columns::id.eq(search_for))
-            .first(connection)
+            .first(conn)
     }
 
     pub fn get_by_id_no_blob(
         search_for: &i64,
-        connection: &PgConnection,
+        conn: &PgConnection,
     ) -> Result<ArtistPostNoBlob, diesel::result::Error> {
         artist_posts::table
             .select((
@@ -152,34 +152,34 @@ impl ArtistPost {
                 columns::created_at,
             ))
             .filter(columns::id.eq(search_for))
-            .first(connection)
+            .first(conn)
     }
 
     pub fn get_by_id_only_blob(
         search_for: &i64,
-        connection: &PgConnection,
+        conn: &PgConnection,
     ) -> Result<ArtistPostOnlyBlob, diesel::result::Error> {
         artist_posts::table
             .select((columns::blob, columns::file_name, columns::file_type))
             .filter(columns::id.eq(search_for))
-            .first(connection)
+            .first(conn)
     }
 
     pub fn get_by_id_only_thumb(
         search_for: &i64,
-        connection: &PgConnection,
+        conn: &PgConnection,
     ) -> Result<ArtistPostOnlyThumb, diesel::result::Error> {
         artist_posts::table
             .select((columns::thumb, columns::file_name, columns::file_type))
             .filter(columns::id.eq(search_for))
-            .first(connection)
+            .first(conn)
     }
 
     pub fn get_all_for_compare(
-        connection: &PgConnection,
+        conn: &PgConnection,
     ) -> Result<Vec<ArtistPostPerceptualHashOnly>, diesel::result::Error> {
         artist_posts::table
             .select((columns::id, columns::perceptual_hash))
-            .get_results(connection)
+            .get_results(conn)
     }
 }

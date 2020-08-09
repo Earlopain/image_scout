@@ -26,22 +26,22 @@ impl ArtistAlias {
     pub fn create(
         artist_id: &i64,
         alias: &str,
-        connection: &PgConnection,
+        conn: &PgConnection,
     ) -> Result<ArtistAlias, Box<dyn Error>> {
         let alias = NewArtistAlias { artist_id, alias };
 
         let inserted = diesel::insert_into(artist_aliases::table)
             .values(&alias)
-            .get_result(connection)?;
+            .get_result(conn)?;
         Ok(inserted)
     }
 
     pub fn get_by_name(
         search_for: &str,
-        connection: &PgConnection,
+        conn: &PgConnection,
     ) -> Result<std::vec::Vec<ArtistAlias>, diesel::result::Error> {
         artist_aliases::table
             .filter(dsl::alias.eq(search_for))
-            .load(connection)
+            .load(conn)
     }
 }

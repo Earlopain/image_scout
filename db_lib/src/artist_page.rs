@@ -5,7 +5,6 @@ use chrono::{DateTime, NaiveDateTime, Utc};
 use diesel;
 use diesel::pg::PgConnection;
 use diesel::prelude::*;
-#[cfg(feature = "json")]
 use serde::{Deserialize, Serialize};
 
 #[derive(Insertable)]
@@ -19,8 +18,7 @@ pub struct NewArtistPage<'a> {
     pub active: bool,
 }
 
-#[cfg_attr(feature = "json", derive(Serialize, Deserialize))]
-#[derive(Queryable)]
+#[derive(Queryable, Serialize, Deserialize)]
 pub struct ArtistPage {
     pub id: i64,
     pub artist_id: i64,

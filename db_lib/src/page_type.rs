@@ -4,7 +4,6 @@ use diesel;
 use diesel::pg::PgConnection;
 use diesel::prelude::*;
 use regex::Regex;
-#[cfg(feature = "json")]
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::sync::Mutex;
@@ -12,8 +11,7 @@ use std::sync::Mutex;
 lazy_static! {
     static ref HASHMAP: Mutex<HashMap<i64, Regex>> = Mutex::new(HashMap::new());
 }
-#[cfg_attr(feature = "json", derive(Serialize, Deserialize))]
-#[derive(Queryable)]
+#[derive(Queryable, Serialize, Deserialize)]
 pub struct PageType {
     pub id: i64,
     pub name: String,

@@ -8,7 +8,6 @@ use crate::schema::artists::dsl::*;
 use diesel;
 use diesel::pg::PgConnection;
 use diesel::prelude::*;
-#[cfg(feature = "json")]
 use serde::{Deserialize, Serialize};
 
 #[derive(Insertable)]
@@ -17,8 +16,7 @@ pub struct NewArtist<'a> {
     pub name: &'a str,
 }
 
-#[cfg_attr(feature = "json", derive(Serialize, Deserialize))]
-#[derive(Queryable)]
+#[derive(Queryable, Serialize, Deserialize)]
 pub struct Artist {
     pub id: i64,
     pub name: String,

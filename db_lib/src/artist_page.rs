@@ -1,4 +1,5 @@
 use crate::error::DbError;
+use crate::provider::post_provider::PostProvider;
 use crate::schema::artist_pages;
 use crate::schema::artist_pages::dsl;
 use chrono::{DateTime, NaiveDateTime, Utc};
@@ -12,6 +13,7 @@ use serde::{Deserialize, Serialize};
 pub struct NewArtistPage<'a> {
     pub artist_id: &'a i64,
     pub page_type: &'a i64,
+    pub site_id: Option<&'a String>,
     pub url: &'a str,
     pub added_at: DateTime<Utc>,
     pub last_update: DateTime<Utc>,
@@ -23,6 +25,7 @@ pub struct ArtistPage {
     pub id: i64,
     pub artist_id: i64,
     pub page_type: i64,
+    pub site_id: Option<String>,
     pub url: String,
     pub added_at: DateTime<Utc>,
     pub last_update: DateTime<Utc>,
@@ -36,9 +39,11 @@ impl ArtistPage {
         url: &str,
         conn: &PgConnection,
     ) -> Result<ArtistPage, DbError> {
+        let site_id = PostProvider::get_user_id(page_type, url);
         let page = NewArtistPage {
             artist_id,
             page_type,
+            site_id: site_id.as_ref(),
             url,
             added_at: Utc::now(),
             last_update: DateTime::from_utc(NaiveDateTime::from_timestamp(0, 0), Utc),

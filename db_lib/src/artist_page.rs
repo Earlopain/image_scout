@@ -1,7 +1,7 @@
 use crate::error::DbError;
 use crate::schema::artist_pages;
 use crate::schema::artist_pages::dsl;
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, NaiveDateTime, Utc};
 use diesel;
 use diesel::pg::PgConnection;
 use diesel::prelude::*;
@@ -43,7 +43,7 @@ impl ArtistPage {
             page_type,
             url,
             added_at: Utc::now(),
-            last_update: Utc::now(),
+            last_update: DateTime::from_utc(NaiveDateTime::from_timestamp(0, 0), Utc),
             active: true,
         };
 

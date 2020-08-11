@@ -7,14 +7,14 @@ use diesel::PgConnection;
 use reqwest::blocking::Response;
 
 pub struct NewPosts {
-    last_site_id: Option<String>,
-    posts: Vec<RequiredApiFields>,
+    pub last_site_id: Option<String>,
+    pub posts: Vec<RequiredApiFields>,
 }
 
 pub struct RequiredApiFields {
-    source_url: String,
-    direct_url: String,
-    created_at: DateTime<Utc>,
+    pub source_url: String,
+    pub direct_url: String,
+    pub created_at: DateTime<Utc>,
 }
 
 pub trait ApiCrawler {
@@ -38,7 +38,7 @@ impl PostProvider {
         page: &ArtistPage,
         conn: &PgConnection,
     ) -> Result<(), InsertImageFromUrlError> {
-        let posts_to_insert = match page.id {
+        let posts_to_insert = match page.page_type {
             1 => Twitter::get_new_posts(page),
             _ => panic!("Unimplemented Crawler!"),
         };

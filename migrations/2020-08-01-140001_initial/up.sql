@@ -26,10 +26,11 @@ CREATE TABLE artist_pages (
 	id bigserial NOT NULL,
 	artist_id int8 NOT NULL,
 	page_type int8 NOT NULL,
-    site_id varchar(50) NOT NULL,
 	url varchar(100) NOT NULL,
-	added_at timestamptz NOT NULL,
+    site_id varchar(50) NOT NULL,
 	last_update timestamptz NOT NULL,
+    added_at timestamptz NOT NULL,
+
 	active bool NOT NULL,
 	CONSTRAINT idx_16597_primary PRIMARY KEY (id)
 );

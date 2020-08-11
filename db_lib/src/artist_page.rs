@@ -13,10 +13,10 @@ use serde::{Deserialize, Serialize};
 pub struct NewArtistPage<'a> {
     pub artist_id: &'a i64,
     pub page_type: &'a i64,
-    pub site_id: String,
     pub url: &'a str,
-    pub added_at: DateTime<Utc>,
+    pub site_id: String,
     pub last_update: DateTime<Utc>,
+    pub added_at: DateTime<Utc>,
     pub active: bool,
 }
 
@@ -25,10 +25,10 @@ pub struct ArtistPage {
     pub id: i64,
     pub artist_id: i64,
     pub page_type: i64,
-    pub site_id: String,
     pub url: String,
-    pub added_at: DateTime<Utc>,
+    pub site_id: String,
     pub last_update: DateTime<Utc>,
+    pub added_at: DateTime<Utc>,
     pub active: bool,
 }
 
@@ -43,10 +43,10 @@ impl ArtistPage {
         let page = NewArtistPage {
             artist_id,
             page_type,
-            site_id,
             url,
-            added_at: Utc::now(),
+            site_id,
             last_update: DateTime::from_utc(NaiveDateTime::from_timestamp(0, 0), Utc),
+            added_at: Utc::now(),
             active: true,
         };
 

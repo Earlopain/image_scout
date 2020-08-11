@@ -11,10 +11,10 @@ table! {
         id -> Int8,
         artist_id -> Int8,
         page_type -> Int8,
-        site_id -> Varchar,
         url -> Varchar,
-        added_at -> Timestamptz,
+        site_id -> Varchar,
         last_update -> Timestamptz,
+        added_at -> Timestamptz,
         active -> Bool,
     }
 }

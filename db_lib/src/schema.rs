@@ -11,7 +11,7 @@ table! {
         id -> Int8,
         artist_id -> Int8,
         page_type -> Int8,
-        site_id -> Nullable<Varchar>,
+        site_id -> Varchar,
         url -> Varchar,
         added_at -> Timestamptz,
         last_update -> Timestamptz,

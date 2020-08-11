@@ -20,7 +20,7 @@ impl ApiCrawler for Twitter {
     }
 
     //TODO error handling
-    fn get_user_id(url: &str) -> Option<String> {
+    fn get_user_id(url: &str) -> String {
         let username = &url[20..url.len() - 1];
         let response = Self::make_authenticated_request(
             &(BASE.to_owned() + "users/lookup.json?screen_name=" + username),
@@ -28,11 +28,7 @@ impl ApiCrawler for Twitter {
         let text = response.unwrap().text().unwrap();
         //TODO check if the result vec is empty
         let mut users: Vec<TwitterUser> = serde_json::from_str(&text).unwrap();
-        Some(users.remove(0).id)
-    }
-
-    fn get_api_identifier(page: &ArtistPage) -> &String {
-        page.site_id.as_ref().unwrap()
+        users.remove(0).id
     }
 
     fn make_authenticated_request(url: &str) -> reqwest::Result<Response> {

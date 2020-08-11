@@ -11,18 +11,17 @@ pub struct RequiredApiFields {
 
 pub trait ApiCrawler {
     fn get_new_posts(page: &ArtistPage) -> Vec<RequiredApiFields>;
-    fn get_user_id(url: &str) -> Option<String>;
-    fn get_api_identifier(page: &ArtistPage) -> &String;
+    fn get_user_id(url: &str) -> String;
     fn make_authenticated_request(url: &str) -> reqwest::Result<Response>;
 }
 
 pub struct PostProvider {}
 
 impl PostProvider {
-    pub fn get_user_id(page_type: &i64, url: &str) -> Option<String> {
+    pub fn get_user_id(page_type: &i64, url: &str) -> String {
         match page_type {
             1 => Twitter::get_user_id(url),
-            2 => None,
+            2 => "".to_string(),
             _ => panic!("Unimplemented Crawler! {}", url),
         }
     }

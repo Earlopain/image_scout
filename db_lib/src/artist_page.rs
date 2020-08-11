@@ -13,7 +13,7 @@ use serde::{Deserialize, Serialize};
 pub struct NewArtistPage<'a> {
     pub artist_id: &'a i64,
     pub page_type: &'a i64,
-    pub site_id: Option<String>,
+    pub site_id: String,
     pub url: &'a str,
     pub added_at: DateTime<Utc>,
     pub last_update: DateTime<Utc>,
@@ -25,7 +25,7 @@ pub struct ArtistPage {
     pub id: i64,
     pub artist_id: i64,
     pub page_type: i64,
-    pub site_id: Option<String>,
+    pub site_id: String,
     pub url: String,
     pub added_at: DateTime<Utc>,
     pub last_update: DateTime<Utc>,

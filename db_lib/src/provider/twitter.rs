@@ -1,5 +1,5 @@
 use crate::artist_page::ArtistPage;
-use crate::provider::post_provider::{ApiCrawler, RequiredApiFields};
+use crate::provider::post_provider::{ApiCrawler, NewPosts};
 use reqwest::blocking::Response;
 use reqwest::header::AUTHORIZATION;
 use serde::Deserialize;
@@ -15,7 +15,7 @@ struct TwitterUser {
 pub struct Twitter {}
 
 impl ApiCrawler for Twitter {
-    fn get_new_posts(_page: &ArtistPage) -> Vec<RequiredApiFields> {
+    fn get_new_posts(_page: &ArtistPage) -> NewPosts {
         unimplemented!()
     }
 

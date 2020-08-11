@@ -67,4 +67,17 @@ impl ArtistPage {
             .filter(dsl::artist_id.eq(search_for))
             .load(conn)
     }
+
+    pub fn update(
+        self: &Self,
+        site_last_post_id: Option<String>,
+        conn: &PgConnection,
+    ) -> Result<Self, DbError> {
+        diesel::update(artist_pages::table.filter(dsl::id.eq(self.id)))
+            .set((
+                dsl::site_last_post_id.eq(site_last_post_id),
+                (dsl::last_update.eq(Utc::now())),
+            ))
+            .get_result(conn)
+    }
 }

@@ -2,9 +2,15 @@ use crate::artist_page::ArtistPage;
 use crate::provider::post_provider::{ApiCrawler, RequiredApiFields};
 use reqwest::blocking::Response;
 use reqwest::header::AUTHORIZATION;
-use serde_json::Value;
+use serde::Deserialize;
 
 const BASE: &'static str = "https://api.twitter.com/1.1/";
+
+#[derive(Deserialize)]
+struct TwitterUser {
+    #[serde(rename(deserialize = "id_str"))]
+    id: String,
+}
 
 pub struct Twitter {}
 
@@ -20,8 +26,9 @@ impl ApiCrawler for Twitter {
             &(BASE.to_owned() + "users/lookup.json?screen_name=" + username),
         );
         let text = response.unwrap().text().unwrap();
-        let a: Value = serde_json::from_str(&text).unwrap();
-        Some(a.get(0).unwrap().get("id").unwrap().to_string())
+        //TODO check if the result vec is empty
+        let mut users: Vec<TwitterUser> = serde_json::from_str(&text).unwrap();
+        Some(users.remove(0).id)
     }
 
     fn get_api_identifier(page: &ArtistPage) -> &String {

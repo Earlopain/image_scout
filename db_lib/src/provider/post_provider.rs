@@ -19,7 +19,7 @@ pub trait ApiCrawler {
 pub struct PostProvider {}
 
 impl PostProvider {
-    pub fn get_user_id<'a>(page_type: &'a i64, url: &'a str) -> Option<String> {
+    pub fn get_user_id(page_type: &i64, url: &str) -> Option<String> {
         match page_type {
             1 => Twitter::get_user_id(url),
             2 => None,

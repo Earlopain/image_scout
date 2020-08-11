@@ -27,10 +27,10 @@ CREATE TABLE artist_pages (
 	artist_id int8 NOT NULL,
 	page_type int8 NOT NULL,
 	url varchar(100) NOT NULL,
-    site_id varchar(50) NOT NULL,
+    site_user_id varchar(50) NOT NULL,
+    site_last_post_id varchar(50) NULL DEFAULT NULL::character varying,
 	last_update timestamptz NOT NULL,
     added_at timestamptz NOT NULL,
-
 	active bool NOT NULL,
 	CONSTRAINT idx_16597_primary PRIMARY KEY (id)
 );

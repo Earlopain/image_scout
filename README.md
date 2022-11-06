@@ -1,3 +1,5 @@
+Use [Earlopain/reverser](https://github.com/Earlopain/reverser) instead.
+
 # Setup
 
 Set `TWITTER_BEARER` in the `.env` file

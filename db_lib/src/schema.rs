@@ -1,4 +1,6 @@
-table! {
+// @generated automatically by Diesel CLI.
+
+diesel::table! {
     artist_aliases (id) {
         id -> Int8,
         artist_id -> Int8,
@@ -6,7 +8,7 @@ table! {
     }
 }
 
-table! {
+diesel::table! {
     artist_pages (id) {
         id -> Int8,
         artist_id -> Int8,
@@ -20,7 +22,7 @@ table! {
     }
 }
 
-table! {
+diesel::table! {
     artist_posts (id) {
         id -> Int8,
         artist_id -> Int8,
@@ -38,14 +40,14 @@ table! {
     }
 }
 
-table! {
+diesel::table! {
     artists (id) {
         id -> Int8,
         name -> Varchar,
     }
 }
 
-table! {
+diesel::table! {
     page_types (id) {
         id -> Int8,
         name -> Varchar,
@@ -53,7 +55,7 @@ table! {
     }
 }
 
-table! {
+diesel::table! {
     upload_cache (id) {
         id -> Int8,
         blob -> Bytea,
@@ -63,13 +65,13 @@ table! {
     }
 }
 
-joinable!(artist_aliases -> artists (artist_id));
-joinable!(artist_pages -> artists (artist_id));
-joinable!(artist_pages -> page_types (page_type));
-joinable!(artist_posts -> artists (artist_id));
-joinable!(artist_posts -> page_types (page_type));
+diesel::joinable!(artist_aliases -> artists (artist_id));
+diesel::joinable!(artist_pages -> artists (artist_id));
+diesel::joinable!(artist_pages -> page_types (page_type));
+diesel::joinable!(artist_posts -> artists (artist_id));
+diesel::joinable!(artist_posts -> page_types (page_type));
 
-allow_tables_to_appear_in_same_query!(
+diesel::allow_tables_to_appear_in_same_query!(
     artist_aliases,
     artist_pages,
     artist_posts,
